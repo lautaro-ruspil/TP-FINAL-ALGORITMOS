@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block title %}Préstamos{% endblock %} {% block
+content %}
+<h2>Libros Prestados</h2>
+
+{% if books %}
+<table>
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Género</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.titulo }}</td>
+            <td>{{ book.autor }}</td>
+            <td>{{ book.genero }}</td>
+            <td>
+                <form
+                    method="post"
+                    action="{{ url_for('devolver', titulo=book.titulo) }}"
+                >
+                    <button type="submit">Devolver</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay libros prestados actualmente.</p>
+{% endif %} {% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %} {% block title %}Gestión de Libros{% endblock %} {%
+block content %}
+<h2>Gestión de Libros</h2>
+
+<!-- Botón para mostrar formulario -->
+<button id="mostrarForm">Agregar libro</button>
+
+<form id="formAgregar" method="POST" class="oculto">
+	<input type="text" name="titulo" placeholder="Título" required />
+	<input type="text" name="autor" placeholder="Autor" required />
+	<input type="text" name="genero" placeholder="Género" required />
+	<button type="submit">Guardar</button>
+</form>
+
+<hr />
+
+<!-- Búsqueda -->
+<form method="get" action="{{ url_for('libros') }}">
+	<input
+		type="text"
+		name="q"
+		value="{{ q }}"
+		placeholder="Buscar por título..."
+	/>
+	<button type="submit">Buscar</button>
+</form>
+
+<!-- Tabla -->
+{% if books %}
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Título</th>
+			<th>Autor</th>
+			<th>Género</th>
+			<th>Estado</th>
+			<th>Acción</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for book in books %}
+		<tr>
+			<td>{{book.id_libro}}</td>
+			<td>{{ book.titulo }}</td>
+			<td>{{ book.autor }}</td>
+			<td>{{ book.genero }}</td>
+			<td class="{{ 'prestado' if book.prestado else 'disponible' }}">
+				{{ 'Prestado' if book.prestado else 'Disponible' }}
+			</td>
+			<td>
+				<form
+					method="post"
+					action="{{ url_for('eliminar', id_libro=book.id_libro) }}"
+				>
+					<button>Eliminar</button>
+				</form>
+				{% if not book.prestado %}
+				<form
+					method="post"
+					action="{{ url_for('prestar', id_libro=book.id_libro) }}"
+				>
+					<button type="submit">Prestar</button>
+				</form>
+				{% else %}
+				<form
+					method="post"
+					action="{{ url_for('devolver', id_libro=book.id_libro) }}"
+				>
+					<button type="submit">Devolver</button>
+				</form>
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% else %}
+<p>No hay libros registrados.</p>
+{% endif %}
+
+<script>
+	const btn = document.getElementById("mostrarForm");
+	const form = document.getElementById("formAgregar");
+	btn.addEventListener("click", () => form.classList.toggle("oculto"));
+</script>
+{% endblock %}

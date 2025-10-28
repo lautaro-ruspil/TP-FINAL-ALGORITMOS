@@ -1,0 +1,212 @@
+/* ===========================
+   PALETA GRIS-AZULADA
+=========================== */
+
+:root {
+	--fondo: #e8ebf0;
+	--fondo-claro: #f1f3f6;
+	--card: #ffffff;
+	--azul: #3a5a91;
+	--azul-hover: #314d7b;
+	--gris-texto: #222;
+	--gris-secundario: #555;
+	--borde: #d0d4db;
+}
+
+body {
+	font-family: "Poppins", sans-serif;
+	background-color: var(--fondo);
+	color: var(--gris-texto);
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+header {
+	background-color: var(--azul);
+	color: white;
+	padding: 14px 0;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+header .container {
+	width: 90%;
+	max-width: 1100px;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+header h2 {
+	margin: 0;
+	font-weight: 600;
+	font-size: 1.4rem;
+	color: #fff;
+}
+
+/* ===========================
+   NAV
+=========================== */
+nav {
+	display: flex;
+	gap: 20px;
+}
+
+nav a {
+	color: white;
+	text-decoration: none;
+	font-weight: 500;
+	padding: 6px 10px;
+	border-radius: 5px;
+	transition: background 0.2s, color 0.2s;
+}
+
+nav a:hover {
+	background-color: var(--azul-hover);
+}
+
+nav a.activo {
+	background-color: #fff;
+	color: var(--azul);
+}
+
+/* ===========================
+   MAIN / CONTENIDO
+=========================== */
+
+main {
+	background: var(--card);
+	padding: 30px;
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+	width: fit-content; /* se ajusta al contenido */
+	margin: 40px auto; /* centrado horizontal + margen arriba/abajo */
+}
+
+.dashboard h2 {
+	color: var(--azul);
+}
+
+.dashboard p {
+	color: var(--gris-secundario);
+}
+
+.dashboard .container-resumen {
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.container-resumen a {
+	text-decoration: none;
+}
+
+.card-resumen {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #d2d2d2;
+	color: var(--gris-texto);
+	font-family: sans-serif;
+	border-radius: 8px;
+	padding: 8px 10px;
+	width: 150px;
+	height: 50px;
+	text-align: center;
+	border-top: 2px solid #314d7b;
+	transition: all ease-in-out 0.3s;
+	cursor: pointer;
+}
+
+.card-resumen:hover {
+	background-color: #b6b6b6;
+	transform: translateY(-8px);
+}
+
+.card-resumen p {
+	pointer-events: none;
+}
+
+/* ===========================
+   FORMULARIOS Y BOTONES
+=========================== */
+button {
+	background-color: var(--azul);
+	color: white;
+	border: none;
+	padding: 10px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: background-color 0.2s ease;
+}
+
+button:hover {
+	background-color: var(--azul-hover);
+}
+
+input,
+select,
+textarea {
+	padding: 8px;
+	border: 1px solid var(--borde);
+	border-radius: 6px;
+	width: 100%;
+	margin-bottom: 12px;
+	background-color: var(--fondo-claro);
+}
+
+.prestado {
+	color: red;
+}
+
+.disponible {
+	color: green;
+}
+
+/* ===========================
+   TABLAS
+=========================== */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+	background-color: var(--fondo-claro);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+th,
+td {
+	border: 1px solid var(--borde);
+	padding: 10px 12px;
+	text-align: left;
+}
+
+th {
+	background-color: var(--fondo);
+	font-weight: 600;
+}
+
+tr:nth-child(even) {
+	background-color: #f6f7fa;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+	text-align: center;
+	padding: 16px;
+	font-size: 14px;
+	color: #444;
+	background-color: #dfe3eb;
+	border-top: 1px solid #c5cad2;
+}
