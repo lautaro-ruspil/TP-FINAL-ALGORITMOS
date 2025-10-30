@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}{% endblock %} - Biblioteca</title>
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/index.css') }}"
-        />
+	<head>
+		<meta charset="UTF-8" />
+		<title>{% block title %}{% endblock %} - Biblioteca</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/index.css') }}"
+		/>
 
-        <!-- Bloque para estilos específicos de cada página -->
-        {% block extra_css %}{% endblock %}
+		<!-- Bloque para estilos específicos de cada página -->
+		{% block extra_css %}{% endblock %}
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-            rel="stylesheet"
-        />
-    </head>
-    <body>
-        <header>
-            <div class="container">
-                <h2>Biblioteca Escolar</h2>
-                <nav>
-                    <a
-                        href="{{ url_for('inicio') }}"
-                        class="{% if active_page == 'inicio'%}activo{% endif %}"
-                        >Inicio</a
-                    >
-                    <a
-                        href="{{ url_for('usuarios') }}"
-                        class="{% if active_page == 'usuarios'%}activo{% endif %}"
-                        >Usuarios</a
-                    >
-                    <a
-                        href="{{ url_for('libros') }}"
-                        class="{% if active_page == 'libros'%}activo{% endif %}"
-                        >Libros</a
-                    >
-                    <a
-                        href="{{ url_for('prestamos') }}"
-                        class="{% if active_page == 'prestamos'%}activo{% endif %}"
-                        >Préstamos</a
-                    >
-                </nav>
-            </div>
-        </header>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<header>
+			<div class="container">
+				<h2>Biblioteca Escolar</h2>
+				<nav>
+					<a
+						href="{{ url_for('inicio') }}"
+						class="{% if active_page == 'inicio'%}activo{% endif %}"
+						>Inicio</a
+					>
+					<a
+						href="{{ url_for('usuarios') }}"
+						class="{% if active_page == 'usuarios'%}activo{% endif %}"
+						>Usuarios</a
+					>
+					<a
+						href="{{ url_for('libros') }}"
+						class="{% if active_page == 'libros'%}activo{% endif %}"
+						>Libros</a
+					>
+					<a
+						href="{{ url_for('prestamos') }}"
+						class="{% if active_page == 'prestamos'%}activo{% endif %}"
+						>Préstamos</a
+					>
+				</nav>
+			</div>
+		</header>
 
-        <main class="container">{% block content %}{% endblock %}</main>
+		<main class="container">{% block content %}{% endblock %}</main>
 
-        <footer>
-            <p>Proyecto Final - Gestión de Biblioteca © 2025</p>
-        </footer>
-    </body>
+		<footer>
+			<p>Proyecto Final - Gestión de Biblioteca © 2025</p>
+		</footer>
+	</body>
 </html>

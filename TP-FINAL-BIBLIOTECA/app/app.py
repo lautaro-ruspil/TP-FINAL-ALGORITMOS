@@ -19,6 +19,10 @@ except Exception as e:
 biblioteca = Biblioteca()
 
 
+lib1 = Libro(9, "El principito", "Autor 45", "Drama")
+lib2 = Libro(19, "Cien Años de soledad", "Gabriel García Márquez", "Terror")
+lib3 = Libro(29, "Rayuela", "Javier Milei", "Terror")
+
 # buscar un libro y asignarselo a un usuario inicial
 lib_principito = biblioteca.obtener_libro_por_titulo("El principito")
 biblioteca.agregar_usuario(
@@ -29,7 +33,7 @@ biblioteca.agregar_usuario(
         "2284-225443",
         "Tierra del fuego",
         1340,
-        [lib_principito],
+        [lib1, lib2],
     )
 )
 
@@ -42,7 +46,7 @@ biblioteca.agregar_usuario(
         "2284-124443",
         "Tierra del fuego",
         1123,
-        [lib_cien_años_de_soledad],
+        [lib1],
     )
 )
 
@@ -55,7 +59,7 @@ biblioteca.agregar_usuario(
         "2284-225443",
         "hornos",
         2020,
-        [lib_rayuela, lib_principito, lib_cien_años_de_soledad],
+        [lib3],
     )
 )
 
@@ -145,10 +149,20 @@ def eliminar(id_libro):
     return redirect(url_for("libros"))
 
 
-# --- Ruta Prestamos ---
-@app.route("/prestamos")
+# --- Ruta Prestamos ---[
+@app.route("/prestamos", methods=['GET'])
 def prestamos():
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
     prestados = [l for l in biblioteca.libros if l.prestado]
+    # --- Consultar libros (GET) ---
+    q = request.args.get("q", "")
+    if q:
+        cursor.execute("SELECT * FROM libros WHERE titulo LIKE %s", (f"%{q}%",))
+    else:
+        cursor.execute("SELECT * FROM libros")
+    
+
     return render_template("prestamos.html", books=prestados, active_page="prestamos")
 
 
