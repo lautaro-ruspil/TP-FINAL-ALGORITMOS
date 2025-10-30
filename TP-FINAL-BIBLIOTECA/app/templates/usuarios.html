@@ -1,60 +1,54 @@
-{% extends "base.html" %}
-{% block title %}Usuarios{% endblock %}
-
-{% block extra_css %}
+{% extends "base.html" %} {% block title %}Usuarios{% endblock %} {% block
+extra_css %}
 <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/usuarios.css') }}"
+	rel="stylesheet"
+	href="{{ url_for('static', filename='css/usuarios.css') }}"
 />
-{% endblock %}
-
-{% block content %} 
+{% endblock %} {% block content %}
 
 <h2>Usuarios</h2>
 
 {% if users %}
 <table>
-    <thead>
-        <tr>
-            <th>Nombres</th>
-            <th>Apellido</th>
-            <th>DNI</th>
-            <th>Teléfono</th>
-            <th>Dirección</th>
-            <th>N° Dir.</th>
-            <th>Libros en propiedad</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{user.nombre}}</td>
-            <td>{{user.apellido}}</td>
-            <td>{{user.dni}}</td>
-            <td>{{user.telefono}}</td>
-            <td>{{user.direccion}}</td>
-            <td>{{user.nro_direccion}}</td>
-            <td>
-                {% if user.libros %}
-                    {% for libro in user.libros %}
-                    <p>{{libro.titulo}} - {{libro.autor}}</p>
-                    {% endfor %}
-                {% else %}
-                <p>-</p>
-                {% endif %}
-            </td>
-            <td class="container-buttons">
-                <form action="">
-                    <button>Eliminar</button>
-                </form>
-                <form action="">
-                    <button>Prestar</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+	<thead>
+		<tr>
+			<th>Nombres</th>
+			<th>Apellido</th>
+			<th>DNI</th>
+			<th>Teléfono</th>
+			<th>Dirección</th>
+			<th>N° Dir.</th>
+			<th>Libros en propiedad</th>
+			<th>Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for user in users %}
+		<tr>
+			<td>{{user.nombre}}</td>
+			<td>{{user.apellido}}</td>
+			<td>{{user.dni}}</td>
+			<td>{{user.telefono}}</td>
+			<td>{{user.direccion}}</td>
+			<td>{{user.nro_direccion}}</td>
+			<td>
+				{% if user.libros %} {% for libro in user.libros %}
+				<p>{{libro.titulo}} - {{libro.autor}}</p>
+				{% endfor %} {% else %}
+				<p>-</p>
+				{% endif %}
+			</td>
+			<td class="container-buttons">
+				<form action="">
+					<button>Eliminar</button>
+				</form>
+				<form action="">
+					<button>Prestar</button>
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
 </table>
 {% else %}
 <p>No hay usuarios registrados</p>
@@ -63,91 +57,91 @@
 <hr />
 
 <form action="/usuarios" method="post" class="form-usuario">
-    <div>
-        <label for="nombre">Nombres:</label>
-        <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            placeholder="Juan"
-            value="{{datos.get('nombre') if datos else ''}}"
-        />
-        {% if errores and errores.nombre %}
-        <p class="error">{{errores.nombre}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="nombre">Nombres:</label>
+		<input
+			type="text"
+			id="nombre"
+			name="nombre"
+			placeholder="Juan"
+			value="{{datos.get('nombre') if datos else ''}}"
+		/>
+		{% if errores and errores.nombre %}
+		<p class="error">{{errores.nombre}}</p>
+		{% endif %}
+	</div>
 
-    <div>
-        <label for="apellido">Apellido:</label>
-        <input
-            type="text"
-            id="apellido"
-            name="apellido"
-            placeholder="Pérez"
-            value="{{datos.get('apellido') if datos else ''}}"
-        />
-        {% if errores and errores.apellido %}
-        <p class="error">{{errores.apellido}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="apellido">Apellido:</label>
+		<input
+			type="text"
+			id="apellido"
+			name="apellido"
+			placeholder="Pérez"
+			value="{{datos.get('apellido') if datos else ''}}"
+		/>
+		{% if errores and errores.apellido %}
+		<p class="error">{{errores.apellido}}</p>
+		{% endif %}
+	</div>
 
-    <div>
-        <label for="dni">DNI:</label>
-        <input
-            type="number"
-            id="dni"
-            name="dni"
-            placeholder="1234567"
-            value="{{datos.get('dni') if datos else ''}}"
-        />
-        {% if errores and errores.dni %}
-        <p class="error">{{errores.dni}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="dni">DNI:</label>
+		<input
+			type="number"
+			id="dni"
+			name="dni"
+			placeholder="1234567"
+			value="{{datos.get('dni') if datos else ''}}"
+		/>
+		{% if errores and errores.dni %}
+		<p class="error">{{errores.dni}}</p>
+		{% endif %}
+	</div>
 
-    <div>
-        <label for="telefono">Teléfono:</label>
-        <input
-            type="text"
-            id="telefono"
-            name="telefono"
-            placeholder="2284-123456"
-            value="{{datos.get('telefono') if datos else ''}}"
-        />
-        {% if errores and errores.telefono %}
-        <p class="error">{{errores.telefono}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="telefono">Teléfono:</label>
+		<input
+			type="text"
+			id="telefono"
+			name="telefono"
+			placeholder="2284-123456"
+			value="{{datos.get('telefono') if datos else ''}}"
+		/>
+		{% if errores and errores.telefono %}
+		<p class="error">{{errores.telefono}}</p>
+		{% endif %}
+	</div>
 
-    <div>
-        <label for="direccion">Dirección:</label>
-        <input
-            type="text"
-            id="direccion"
-            name="direccion"
-            placeholder="hornos"
-            value="{{datos.get('direccion') if datos else ''}}"
-        />
-        {% if errores and errores.direccion %}
-        <p class="error">{{errores.direccion}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="direccion">Dirección:</label>
+		<input
+			type="text"
+			id="direccion"
+			name="direccion"
+			placeholder="hornos"
+			value="{{datos.get('direccion') if datos else ''}}"
+		/>
+		{% if errores and errores.direccion %}
+		<p class="error">{{errores.direccion}}</p>
+		{% endif %}
+	</div>
 
-    <div>
-        <label for="nro_direccion">N° Dirección:</label>
-        <input
-            type="number"
-            id="nro_direccion"
-            name="nro_direccion"
-            placeholder="2025"
-            value="{{datos.get('nro_direccion') if datos else ''}}"
-        />
-        {% if errores and errores.nro_direccion %}
-        <p class="error">{{errores.nro_direccion}}</p>
-        {% endif %}
-    </div>
+	<div>
+		<label for="nro_direccion">N° Dirección:</label>
+		<input
+			type="number"
+			id="nro_direccion"
+			name="nro_direccion"
+			placeholder="2025"
+			value="{{datos.get('nro_direccion') if datos else ''}}"
+		/>
+		{% if errores and errores.nro_direccion %}
+		<p class="error">{{errores.nro_direccion}}</p>
+		{% endif %}
+	</div>
 
-    <button type="submit">Agregar</button>
+	<button type="submit">Agregar</button>
 </form>
 
 {% endblock %}
