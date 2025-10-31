@@ -33,7 +33,7 @@ header {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-header .container {
+header .container  {
 	width: 90%;
 	max-width: 1100px;
 	margin: 0 auto;
@@ -47,6 +47,10 @@ header h2 {
 	font-weight: 600;
 	font-size: 1.4rem;
 	color: #fff;
+}
+
+header a {
+	text-decoration: none;
 }
 
 /* ===========================

@@ -1,0 +1,63 @@
+{% extends "base.html" %} 
+{% block title %}Seleccionar Libro para Préstamo{% endblock %} 
+
+{% block extra_css %}
+<link
+	rel="stylesheet"
+	href="{{ url_for('static', filename='css/libros_disponibles.css') }}"
+/>
+{% endblock %}
+
+{% block content %}
+
+<h2>
+    Seleccionar Libro para Préstamo
+</h2>
+<p class="usuario-target">
+    Prestando a: {{ usuario.nombre }} {{ usuario.apellido }} (DNI: {{ usuario.dni }})
+</p>
+
+<div class="table-container">
+    {% if libros %}
+    <table>
+        <thead>
+            <tr>
+								<th>ID</th>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Género</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for libro in libros %}
+            <tr>
+							<td>{{ libro.id_libro }}</td>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.autor }}</td>
+                <td>{{ libro.genero }}</td>
+                <td>
+									<div class="container-action">
+										 <form action="{{ url_for('confirmar_prestamo', id_usuario=usuario.id_usuario, id_libro=libro.id_libro) }}" method="post">
+											<button class="btn-prestar" type="submit">Prestar</button>
+										</form>
+									</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-libros">
+        Actualmente no hay libros disponibles para prestar.
+    </p>
+    {% endif %}
+</div>
+
+<div class="container-volver">
+    <a href="{{ url_for('usuarios') }}" class="btn-volver">
+        ← Volver a Usuarios
+    </a>
+</div>
+
+{% endblock %}

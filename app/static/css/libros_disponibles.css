@@ -1,0 +1,170 @@
+/* ===========================
+    LIBROS DISPONIBLES - ESTILO PROFESIONAL
+=========================== */
+
+/* Importar variables si están en otro archivo, si no, mantener la definición */
+:root {
+  --azul: #3a5a91; 
+  --azul-hover: #2e4a7a;
+  --fondo-claro: #f8f9fb; 
+  --card: #ffffff; 
+  --borde: #e0e6ed; 
+  --gris-texto: #495057; 
+  --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --verde-prestar: #27ae60;
+  --verde-prestar-hover: #219d53;
+}
+
+/* -------- CONTENEDOR PRINCIPAL -------- */
+main {
+  background-color: var(--card);
+  box-shadow: var(--sombra-suave);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  width: 95%;
+  max-width: 1000px; /* Tamaño ideal para esta tabla */
+  margin: 2rem auto;
+}
+
+/* -------- TÍTULO Y USUARIO TARGET -------- */
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--azul);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.usuario-target {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--gris-texto);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--borde);
+}
+
+.no-libros {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--gris-texto);
+    padding: 2rem;
+    background-color: var(--fondo-claro);
+    border-radius: 8px;
+}
+
+/* ===========================
+    TABLA DE LIBROS
+=========================== */
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  min-width: 700px; 
+}
+
+table th,
+table td {
+  padding: 1rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: middle;
+}
+
+table th {
+  background-color: var(--fondo-claro);
+  color: var(--azul);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+table td {
+  color: var(--gris-texto);
+}
+
+table tbody tr:hover {
+  background-color: #f6f8fc;
+  transition: background 0.2s ease;
+}
+
+/* Ajustes específicos para las columnas */
+table th:nth-child(4), table td:nth-child(4) { /* ISBN */
+    white-space: nowrap;
+    width: 1%; 
+}
+table th:nth-child(5), table td:nth-child(5) { /* Acción */
+    width: 1%;
+    text-align: center;
+}
+
+
+/* -------- BOTÓN DE ACCIÓN (Prestar) -------- */
+.container-action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.btn-prestar {
+  background-color: var(--verde-prestar);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600; 
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-prestar:hover {
+  background-color: var(--verde-prestar-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* -------- BOTÓN VOLVER -------- */
+.container-volver {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    border: 1px solid var(--azul);
+    border-radius: 8px;
+    color: var(--azul);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: #fff;
+}
+
+.btn-volver:hover {
+    background-color: var(--fondo-claro);
+    color: var(--azul-hover);
+}
+
+/* ===========================
+    RESPONSIVIDAD 
+=========================== */
+@media (max-width: 600px) {
+    main {
+        padding: 1.5rem 1rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+}

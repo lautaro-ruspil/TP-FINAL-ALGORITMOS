@@ -21,7 +21,9 @@
 	<body>
 		<header>
 			<div class="container">
-				<h2>Biblioteca Escolar</h2>
+				<a href="{{ url_for('inicio') }}" class="{% if active_page == 'inicio'%}activo{% endif %}">
+					<h2>Biblioteca Escolar</h2>
+				</a>
 				<nav>
 					<a
 						href="{{ url_for('inicio') }}"
