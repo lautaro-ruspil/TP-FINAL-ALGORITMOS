@@ -40,8 +40,5 @@ class Biblioteca:
         texto = nombre.lower()
         return [user for user in self.users if texto in user.nombre.lower()]
 
-    def eliminar_usuario(self, nombre):
-        for user in self.users:
-            if user.nombre == nombre:
-                self.users.remove(user)
-                break
+    def eliminar_usuario(self, id_usuario):
+        self.users = [user for user in self.users if user.id_usuario != id_usuario]
