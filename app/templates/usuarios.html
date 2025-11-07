@@ -46,13 +46,13 @@ extra_css %}
                 </td>
                 <td>
                     <div class="container-buttons">
-                        <form
-                        >
+                        <form>
                             <button>Editar</button>
                         </form>
                         <form
                             method="post"
                             action="{{ url_for('eliminar_usuario', id_usuario=user.id_usuario) }}"
+                            onsubmit="return mostrarAlerta(event, this)"
                         >
                             <button>Eliminar</button>
                         </form>
@@ -162,5 +162,28 @@ extra_css %}
 
     <button type="submit">Agregar</button>
 </form>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function mostrarAlerta(e, form) {
+        e.preventDefault(); // evita que el formulario se envíe automáticamente
+
+        Swal.fire({
+            title: "¿Desea eliminar al usuario?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // envía el formulario solo si confirma
+            }
+        });
+
+        return false; // evita que el form se envíe de inmediato
+    }
+</script>
 
 {% endblock %}

@@ -1,216 +1,240 @@
 /* ===========================
-   PALETA GRIS-AZULADA
+   🎨 PALETA AZUL-NARANJA
 =========================== */
 
 :root {
-	--fondo: #e8ebf0;
-	--fondo-claro: #f1f3f6;
-	--card: #ffffff;
-	--azul: #3a5a91;
-	--azul-hover: #314d7b;
-	--gris-texto: #222;
-	--gris-secundario: #555;
-	--borde: #d0d4db;
+    --color-primario-oscuro: #16697a; /* Azul petróleo */
+    --color-primario: #489fb5; /* Azul medio */
+    --color-primario-claro: #82c0cc; /* Azul cielo */
+    --color-fondo: #ede7e3; /* Fondo claro */
+    --color-acento: #ffa62b; /* Naranja acento */
+
+    /* Derivados */
+    --color-texto: #1e2b2f;
+    --color-hover: #3a90a3;
+    --color-borde: #cdd6d9;
+    --color-card: #f9f9f9;
+    --color-gris-suave: #f3f3f3;
+}
+
+/* ===========================
+   BASE GENERAL
+=========================== */
+
+html,
+body {
+    height: 100%;
+    margin: 0;
 }
 
 body {
-	font-family: "Poppins", sans-serif;
-	background-color: var(--fondo);
-	color: var(--gris-texto);
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
+    font-family: "Poppins", sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Contenedor principal del contenido */
+main {
+    flex: 1;
+    background: var(--color-card);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    width: fit-content;
+    margin: 40px auto;
 }
 
 /* ===========================
    HEADER
 =========================== */
+
 header {
-	background-color: var(--azul);
-	color: white;
-	padding: 14px 0;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    background-color: var(--color-primario-oscuro);
+    color: #fff;
+    padding: 14px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-header .container  {
-	width: 90%;
-	max-width: 1100px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+header .container {
+    width: 90%;
+    height: 70px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header h2 {
-	margin: 0;
-	font-weight: 600;
-	font-size: 1.4rem;
-	color: #fff;
+    margin: 0;
+    font-weight: 500;
+    font-size: 2rem;
+    color: var(--color-acento);
+    font-family: "Montserrat";
 }
 
 header a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 /* ===========================
    NAV
 =========================== */
+
 nav {
-	display: flex;
-	gap: 20px;
+    display: flex;
+    gap: 20px;
 }
 
 nav a {
-	color: white;
-	text-decoration: none;
-	font-weight: 500;
-	padding: 6px 10px;
-	border-radius: 5px;
-	transition: background 0.2s, color 0.2s;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    transition: background 0.2s, color 0.2s;
 }
 
 nav a:hover {
-	background-color: var(--azul-hover);
+    background-color: var(--color-primario);
 }
 
 nav a.activo {
-	background-color: #fff;
-	color: var(--azul);
+    background-color: var(--color-acento);
+    color: #fff;
+    cursor: default;
 }
 
 /* ===========================
-   MAIN / CONTENIDO
+   DASHBOARD / CONTENIDO
 =========================== */
 
-main {
-	background: var(--card);
-	padding: 30px;
-	border-radius: 10px;
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-	width: fit-content; /* se ajusta al contenido */
-	margin: 40px auto; /* centrado horizontal + margen arriba/abajo */
-}
-
 .dashboard h2 {
-	color: var(--azul);
+    color: var(--color-primario-oscuro);
 }
 
 .dashboard p {
-	color: var(--gris-secundario);
+    color: var(--color-primario);
 }
 
 .dashboard .container-resumen {
-	display: flex;
-	justify-content: center;
-	gap: 30px;
-	flex-wrap: wrap;
-	align-items: center;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .container-resumen a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .card-resumen {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: #d2d2d2;
-	color: var(--gris-texto);
-	font-family: sans-serif;
-	border-radius: 8px;
-	padding: 8px 10px;
-	width: 150px;
-	height: 50px;
-	text-align: center;
-	border-top: 2px solid #314d7b;
-	transition: all ease-in-out 0.3s;
-	cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-primario-claro);
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    border-top: 3px solid var(--color-primario-oscuro);
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
 }
 
 .card-resumen:hover {
-	background-color: #b6b6b6;
-	transform: translateY(-8px);
-}
-
-.card-resumen p {
-	pointer-events: none;
+    background-color: var(--color-acento);
+    color: #fff;
+    transform: translateY(-6px);
 }
 
 /* ===========================
    FORMULARIOS Y BOTONES
 =========================== */
+
 button {
-	background-color: var(--azul);
-	color: white;
-	border: none;
-	padding: 10px 16px;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 500;
-	transition: background-color 0.2s ease;
+    background-color: var(--color-acento);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
-	background-color: var(--azul-hover);
+    background-color: var(--color-primario);
 }
 
 input,
 select,
 textarea {
-	padding: 8px;
-	border: 1px solid var(--borde);
-	border-radius: 6px;
-	width: 100%;
-	margin-bottom: 12px;
-	background-color: var(--fondo-claro);
+    padding: 8px;
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    width: 100%;
+    margin-bottom: 12px;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
 }
 
+/* Estados */
 .prestado {
-	color: red;
+    color: #c0392b;
 }
 
 .disponible {
-	color: green;
+    color: #27ae60;
 }
 
 /* ===========================
    TABLAS
 =========================== */
+
 table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-	background-color: var(--fondo-claro);
-	border-radius: 6px;
-	overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: var(--color-card);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 th,
 td {
-	border: 1px solid var(--borde);
-	padding: 10px 12px;
-	text-align: left;
+    border: 1px solid var(--color-borde);
+    padding: 10px 12px;
+    text-align: left;
 }
 
 th {
-	background-color: var(--fondo);
-	font-weight: 600;
+    background-color: var(--color-primario);
+    color: #fff;
+    font-weight: 600;
 }
 
 tr:nth-child(even) {
-	background-color: #f6f7fa;
+    background-color: var(--color-gris-suave);
 }
 
 /* ===========================
-   FOOTER
+   FOOTER FIJO AL FONDO
 =========================== */
+
 footer {
-	text-align: center;
-	padding: 16px;
-	font-size: 14px;
-	color: #444;
-	background-color: #dfe3eb;
-	border-top: 1px solid #c5cad2;
+    text-align: center;
+    padding: 16px;
+    font-size: 1rem;
+    color: var(--color-acento);
+    background-color: var(--color-primario-oscuro);
+    border-top: 2px solid var(--color-borde);
+    margin-top: auto; /* Mantiene el footer abajo */
 }
