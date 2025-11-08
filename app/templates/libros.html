@@ -1,87 +1,202 @@
 {% extends "base.html" %} {% block title %}Gestión de Libros{% endblock %} {%
 block content %}
+<link rel="stylesheet" href="../static/css/libros.css" />
 <h2>Gestión de Libros</h2>
 
-<!-- Botón para mostrar formulario -->
-<button id="mostrarForm">Agregar libro</button>
-
 <form id="formAgregar" method="POST" class="oculto">
-	<input type="text" name="titulo" placeholder="Título" required />
-	<input type="text" name="autor" placeholder="Autor" required />
-	<input type="text" name="genero" placeholder="Género" required />
-	<button type="submit">Guardar</button>
+    <input
+        id="input-titulo"
+        type="text"
+        name="titulo"
+        placeholder="Título"
+        value="{{ form.titulo if form else '' }}"
+    />
+    <p class="error" data-field="titulo" style="display:none;"></p>
+
+    <input
+        id="input-autor"
+        type="text"
+        name="autor"
+        placeholder="Autor"
+        value="{{ form.autor if form else '' }}"
+    />
+    <p class="error" data-field="autor" style="display:none;"></p>
+
+    <input
+        id="input-genero"
+        type="text"
+        name="genero"
+        placeholder="Género"
+        value="{{ form.genero if form else '' }}"
+    />
+    <p class="error" data-field="genero" style="display:none;"></p>
+
+    <button type="submit" class="happyButton">Agregar Libro</button>
 </form>
 
 <hr />
 
 <!-- Búsqueda -->
-<form method="get" action="{{ url_for('libros') }}">
-	<input
-		type="text"
-		name="q"
-		value="{{ q }}"
-		placeholder="Buscar por título..."
-	/>
-	<button type="submit">Buscar</button>
+<form id="filtrado" method="get" action="{{ url_for('libros') }}">
+    <label>
+        Filtrar por
+        <select name="campo" id="caracteristica">
+            <option value="titulo" {% if campo == 'titulo' %}selected{% endif %}>Título</option>
+            <option value="autor" {% if campo == 'autor' %}selected{% endif %}>Autor</option>
+            <option value="genero" {% if campo == 'genero' %}selected{% endif %}>Género</option>
+        </select>
+    </label>
+
+    <label>
+        Ordenar por
+        <select name="orden" id="caracteristicaDos">
+            <option value="Ascendente" {% if orden == 'Ascendente' %}selected{% endif %}>Ascendente</option>
+            <option value="Descendente" {% if orden == 'Descendente' %}selected{% endif %}>Descendente</option>
+        </select>
+    </label>
+
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar..." />
+    <button type="submit">Buscar</button>
+    <button type="button" class="angryButton" id="btnLimpiar">Limpiar</button>
 </form>
+
 
 <!-- Tabla -->
 {% if books %}
 <table>
-	<thead>
-		<tr>
-			<th>ID</th>
-			<th>Lautaro</th>
-			<th>Autor</th>
-			<th>Género</th>
-			<th>Estado</th>
-			<th>Acción</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for book in books %}
-		<tr>
-			<td>{{book.id_libro}}</td>
-			<td>{{ book.titulo }}</td>
-			<td>{{ book.autor }}</td>
-			<td>{{ book.genero }}</td>
-			<td class="{{ 'prestado' if book.prestado else 'disponible' }}">
-				{{ 'Prestado' if book.prestado else 'Disponible' }}
-			</td>
-			<td>
-				<form
-					method="post"
-					action="{{ url_for('eliminar', id_libro=book.id_libro) }}"
-				>
-					<button>Eliminar</button>
-				</form>
-				{% if not book.prestado %}
-				<form
-					method="post"
-					action="{{ url_for('prestar', id_libro=book.id_libro) }}"
-				>
-					<button type="submit">Prestar</button>
-				</form>
-				{% else %}
-				<form
-					method="post"
-					action="{{ url_for('devolver', id_libro=book.id_libro) }}"
-				>
-					<button type="submit">Devolver</button>
-				</form>
-				{% endif %}
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Género</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.id_libro }}</td>
+            <td>{{ book.titulo }}</td>
+            <td>{{ book.autor }}</td>
+            <td>{{ book.genero }}</td>
+            <td class="{{ 'prestado' if book.prestado else 'disponible' }}">
+                {{ 'Prestado' if book.prestado else 'Disponible' }}
+            </td>
+            <td>
+                <div class="botonesAccion">
+                    <form
+                        onsubmit="return mostrarAlerta(event, this)"
+                        method="post"
+                        action="{{ url_for('eliminar', id_libro=book.id_libro) }}"
+                    >
+                        <button class="angryButton">Eliminar</button>
+                    </form>
+
+                    <form
+                        method="get"
+                        action="{{ url_for('editar', id_libro=book.id_libro) }}"
+                    >
+                        <button type="submit">Editar</button>
+                    </form>
+
+                    {% if book.prestado %}
+                    <form
+                        method="post"
+                        action="{{ url_for('devolver', id_libro=book.id_libro) }}"
+                    >
+                        <button type="submit" class="happyButton">
+                            Devolver
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% else %}
 <p>No hay libros registrados.</p>
 {% endif %}
 
+
 <script>
-	const btn = document.getElementById("mostrarForm");
-	const form = document.getElementById("formAgregar");
-	btn.addEventListener("click", () => form.classList.toggle("oculto"));
+const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]+$/;
+const letrasNumeros = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s\.,:-]+$/;
+
+const inputs = document.querySelectorAll("#formAgregar input");
+
+inputs.forEach(input => {
+    input.addEventListener("input", () => {
+        const error = document.querySelector(`p.error[data-field="${input.name}"]`);
+        let valor = input.value.trim();
+        let mensaje = "";
+
+        if (input.name === "titulo") {
+            if (!valor) mensaje = "El título es obligatorio.";
+            else if (valor.length < 2) mensaje = "El título debe tener al menos 2 caracteres.";
+            else if (!letrasNumeros.test(valor)) mensaje = "El título no puede contener símbolos especiales.";
+        }
+
+        if (input.name === "autor") {
+            if (!valor) mensaje = "El autor es obligatorio.";
+            else if (valor.length < 3) mensaje = "El autor debe tener al menos 3 caracteres.";
+            else if (!letras.test(valor)) mensaje = "El autor solo puede contener letras y espacios.";
+        }
+
+        if (input.name === "genero") {
+            if (!valor) mensaje = "El género es obligatorio.";
+            else if (valor.length < 3) mensaje = "El género debe tener al menos 3 caracteres.";
+            else if (!letras.test(valor)) mensaje = "El género solo puede contener letras y espacios.";
+        }
+
+        if (mensaje) {
+            error.textContent = mensaje;
+            error.style.display = "block";
+            input.classList.add("error-border");
+        } else {
+            error.textContent = "";
+            error.style.display = "none";
+            input.classList.remove("error-border");
+        }
+    });
+});
+</script>
+
+<script>
+document.getElementById("btnLimpiar").addEventListener("click", function () {
+    const form = document.getElementById("filtrado");
+
+    // Limpiar todos los inputs
+    form.querySelectorAll("input").forEach(input => input.value = "");
+
+    // Resetear todos los selects a la primera opción
+    form.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+});
+</script>
+
+<!-- Alerta de eliminación -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function mostrarAlerta(e, form) {
+        e.preventDefault();
+        Swal.fire({
+            title: "¿Desea eliminar el libro?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
 </script>
 {% endblock %}

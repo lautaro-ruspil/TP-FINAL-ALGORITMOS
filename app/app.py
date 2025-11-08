@@ -2,7 +2,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 from models.biblioteca import Biblioteca
 from models.libro import Libro
 from models.usuario import Usuario
-from utils.validaciones import validar_usuario_form
+from utils.validaciones import validar_usuario_form, validar_libro_form
 
 app = Flask(__name__)
 
@@ -45,6 +45,16 @@ def inicio():
 @app.route("/libros", methods=["GET", "POST"])
 def libros():
     if request.method == "POST":
+        valido, errores = validar_libro_form(request.form)
+        if not valido:
+            q = request.args.get("q", "").lower()
+            books = (
+                [l for l in biblioteca.libros if q in l.titulo.lower()]
+                if q
+                else biblioteca.libros
+            )
+            return render_template("libros.html", books=books, q=q, errores=errores, form=request.form, active_page="libros")
+
         titulo = request.form["titulo"]
         autor = request.form["autor"]
         genero = request.form["genero"]
@@ -52,23 +62,50 @@ def libros():
         biblioteca.agregar_libro(nuevo_libro)
         return redirect(url_for("libros"))
 
+
     q = request.args.get("q", "").lower()
-    books = (
-        [l for l in biblioteca.libros if q in l.titulo.lower()]
-        if q
-        else biblioteca.libros
+    campo = request.args.get("campo", "titulo")
+    orden = request.args.get("orden", "Ascendente")
+
+    if q:
+        books = [l for l in biblioteca.libros if q in getattr(l, campo).lower()]
+    else:
+        books = biblioteca.libros
+
+    reverse = True if orden == "Descendente" else False
+    books.sort(key=lambda x: getattr(x, campo).lower(), reverse=reverse)
+
+    return render_template(
+        "libros.html",
+        books=books,
+        q=q,
+        campo=campo,
+        orden=orden,
+        active_page="libros"
     )
-    return render_template("libros.html", books=books, q=q, active_page="libros")
 
 
-@app.route("/prestar/<int:id_libro>", methods=["POST"])
-def prestar(id_libro):
-    for libro in biblioteca.libros:
-        if libro.id_libro == id_libro:
-            libro.prestado = True
-            break
-    return redirect(url_for("libros"))
 
+
+@app.route("/editar/<int:id_libro>", methods=["GET", "POST"])
+def editar(id_libro):
+    libro = next((l for l in biblioteca.libros if l.id_libro == id_libro), None)
+    if not libro:
+        return "Libro no encontrado", 404
+
+    if request.method == "POST":
+        valido, errores = validar_libro_form(request.form)
+        if valido:
+            libro.titulo = request.form["titulo"]
+            libro.autor = request.form["autor"]
+            libro.genero = request.form["genero"]
+            return redirect(url_for("libros"))
+        else:
+            return render_template(
+                "editar_libro.html", libro=libro, errores=errores, form=request.form
+            )
+
+    return render_template("editar_libro.html", libro=libro, errores={}, form=None)
 
 @app.route("/devolver/<int:id_libro>", methods=["POST"])
 def devolver(id_libro):
