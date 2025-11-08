@@ -1,0 +1,118 @@
+/* -------- CONTENEDOR PRINCIPAL -------- */
+main {
+    background-color: var(--card);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 95%;
+    max-width: 1000px;
+    margin: 2rem auto;
+}
+
+/* -------- TÍTULO -------- */
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--azul);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* -------- FORMULARIO DE EDICIÓN -------- */
+.form-editar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem 2.5rem;
+    padding: 2rem;
+}
+
+.form-editar div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* -------- CAMPOS -------- */
+.form-editar label {
+    font-weight: 600;
+    color: var(--azul);
+    font-size: 0.95rem;
+}
+
+.form-editar input {
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: all 0.2s;
+}
+
+.form-editar input:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 6px rgba(72, 159, 181, 0.4);
+}
+
+/* -------- CAMPO NO EDITABLE -------- */
+.no-editable {
+    font-size: 0.85rem;
+    color: gray;
+}
+
+/* -------- BOTONES -------- */
+.botones {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.botones button {
+    background-color: var(--color-acento);
+    color: #fff;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
+}
+
+.botones button:hover {
+    background-color: var(--color-primario);
+    transform: translateY(-1px);
+}
+
+.btn-cancelar {
+    background-color: #ccc;
+    color: #333;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.btn-cancelar:hover {
+    background-color: var(--rojo-error);
+    color: #fff;
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 700px) {
+    .botones {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .botones button,
+    .btn-cancelar {
+        width: 100%;
+        text-align: center;
+    }
+}

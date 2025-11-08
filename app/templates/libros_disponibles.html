@@ -53,9 +53,66 @@ endblock %} {% block extra_css %}
 </div>
 
 <div class="container-volver">
-    <a href="{{ url_for('usuarios') }}" class="btn-volver">
-        ← Volver a Usuarios
-    </a>
+    <a href="{{ url_for('usuarios') }}" class="btn-volver"> Cancelar </a>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".btn-prestar").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            event.preventDefault(); // Evita envío inmediato
 
+            const form = event.target.closest("form");
+
+            // Confirmación
+            const result = await Swal.fire({
+                title: "¿Confirmar préstamo?",
+                text: "¿Deseas prestar este libro al usuario?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, prestar",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (!result.isConfirmed) return;
+
+            // Mostrar "procesando..."
+            Swal.fire({
+                title: "Procesando...",
+                text: "Registrando el préstamo, por favor espera.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            // Enviar el formulario vía fetch
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Préstamo realizado",
+                    text: "El libro fue prestado correctamente.",
+                    timer: 2000,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        // Redirige automáticamente a la lista de usuarios
+                        window.location.href = "{{ url_for('usuarios') }}";
+                    },
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un problema al registrar el préstamo.",
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}

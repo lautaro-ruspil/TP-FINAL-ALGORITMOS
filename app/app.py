@@ -202,6 +202,33 @@ def confirmar_prestamo(id_usuario, id_libro):
     # Redirigir con mensaje
     return redirect(url_for('usuarios'))
 
+# Editar información de usuario
+@app.route('/editar_usuario/<int:id_usuario>', methods=['GET'])
+def editar_usuario(id_usuario):
+    # Buscar el usuario
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    if not usuario:
+        return "Usuario no encontrado", 404
+
+    return render_template('editar_usuario.html', usuario=usuario, active_page="usuarios")
+
+# Confirmar actualizacion de usuario
+@app.route('/actualizar_usuario/<int:id_usuario>', methods=['POST'])
+def actualizar_usuario(id_usuario):
+    #Buscar el usuario por ID
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    if not usuario:
+        return "Usuario no encontrado", 404
+
+    # Actualizamos los campos editables
+    usuario.nombre = request.form['nombre']
+    usuario.apellido = request.form['apellido']
+    usuario.telefono = request.form['telefono']
+    usuario.direccion = request.form['direccion']
+    usuario.nro_direccion = request.form['nro_direccion']
+
+    # No se permite editar el DNI ni los libros directamente
+    return redirect(url_for('usuarios'))
 
 
 # ---------- ELIMINAR USUARIO ----------

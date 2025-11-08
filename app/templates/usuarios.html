@@ -46,7 +46,10 @@ extra_css %}
                 </td>
                 <td>
                     <div class="container-buttons">
-                        <form>
+                        <form
+                            method="get"
+                            action="{{ url_for('editar_usuario', id_usuario=user.id_usuario) }}"
+                        >
                             <button>Editar</button>
                         </form>
                         <form
