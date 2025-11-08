@@ -1,0 +1,40 @@
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 2px;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 200px;
+    height: 30px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+input.error-border {
+    border: 2px solid red;
+}
+
+.happyButton:hover {
+    background-color: green !important;
+    color: black;
+}
+
+.angryButton:hover {
+    background-color: red !important;
+    color: white !important;
+}
+
+.botonesAccion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+select {
+    width: 100px;
+    outline: none;
+    border: none;
+}
