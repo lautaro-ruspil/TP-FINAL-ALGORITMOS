@@ -28,93 +28,6 @@ main {
 }
 
 /* ===========================
-   FORMULARIO AGREGAR LIBRO
-=========================== */
-
-.form-agregar-libro {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding: 3rem;
-    border: 2px solid var(--color-borde);
-    border-left: 6px solid var(--color-acento);
-    border-radius: 12px;
-    margin: 2rem auto;
-    background-color: #fff;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-}
-
-/* Cada campo con posición relativa */
-.form-agregar-libro .campo {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 30%;
-    min-width: 200px;
-}
-
-/* Input */
-.form-agregar-libro input {
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--color-borde);
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: var(--color-card);
-    transition: border 0.2s ease, box-shadow 0.2s ease;
-    width: 100%;
-}
-
-.form-agregar-libro input:focus {
-    border-color: var(--color-primario);
-    box-shadow: 0 0 6px rgba(72, 159, 181, 0.3);
-    outline: none;
-}
-
-/* Borde rojo si hay error */
-.form-agregar-libro input.error-border {
-    border-color: var(--rojo-error);
-}
-
-/* Mensajes de error sin romper el layout */
-.form-agregar-libro .error {
-    position: absolute;
-    bottom: -1.7rem;
-    left: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--rojo-error);
-    line-height: 1rem;
-    display: none;
-}
-
-.form-agregar-libro .error.visible {
-    display: block;
-}
-
-/* Botón principal alineado */
-.form-agregar-libro .btn-primario {
-    align-self: flex-end;
-    background-color: var(--color-acento);
-    color: #fff;
-    padding: 0.9rem 1.8rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: background 0.2s ease, transform 0.1s ease;
-    box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
-}
-
-.form-agregar-libro .btn-primario:hover {
-    background-color: var(--color-primario);
-    transform: translateY(-1px);
-}
-
-/* ===========================
    FORMULARIO FILTRADO
 =========================== */
 
@@ -285,59 +198,75 @@ tr:nth-child(even) {
     background-color: var(--color-primario);
 }
 
-/* ===========================
-   FORMULARIO EDITAR LIBRO
-=========================== */
-.form-editar-libro {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding: 3rem;
+/* Formulario de edición  y agregar libro */
+
+/* Contenedor general: mantener padding y estilo */
+.form-editar-libro,
+.form-agregar-libro {
+    display: block; /* no queremos flex-column aquí para forzar inputs en fila dentro de .campos-form */
+    max-width: 1100px;
+    padding: 2.5rem;
     border: 2px solid var(--color-borde);
     border-left: 6px solid var(--color-acento);
     border-radius: 12px;
     margin: 2rem auto;
-    background-color: #fff;
+    background: #fff;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
 }
 
-/* Cada campo con posición relativa */
-.form-editar-libro .campo {
-    position: relative;
+/* Contenedor que sí controla la fila de inputs */
+.campos-form {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* intenta mantener todo en una sola fila */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Cada campo: tamaño fijo relativo para que entren 4 en una fila */
+.form-editar-libro .campo,
+.form-agregar-libro .campo {
     display: flex;
     flex-direction: column;
-    width: 30%;
-    min-width: 200px;
+    flex: 0 0 24%; /* cada campo ocupa ~24% -> 4 campos en 96% ancho total */
+    min-width: 180px; /* evita que el input quede demasiado pequeño */
+    box-sizing: border-box;
+    position: relative;
 }
 
-/* Input */
-.form-editar-libro input {
+/* Inputs (mantener estilos) */
+.form-editar-libro input,
+.form-agregar-libro input {
     padding: 0.9rem 1rem;
     border: 1px solid var(--color-borde);
     border-radius: 8px;
-    font-size: 1rem;
     background-color: var(--color-card);
-    transition: border 0.2s ease, box-shadow 0.2s ease;
+    font-size: 1rem;
     width: 100%;
+    box-sizing: border-box;
 }
 
-.form-editar-libro input:focus {
+.form-editar-libro input:focus,
+.form-agregar-libro input:focus {
     border-color: var(--color-primario);
     box-shadow: 0 0 6px rgba(72, 159, 181, 0.3);
     outline: none;
 }
 
 /* Borde rojo si hay error */
-.form-editar-libro input.error-border {
+.form-editar-libro input.error-border,
+.form-agregar-libro input.error-border {
     border-color: var(--rojo-error);
 }
 
-/* Mensajes de error sin romper el layout */
-.form-editar-libro .error {
+/* Mensajes de error (si los usás) */
+.form-editar-libro .error,
+.form-agregar-libro .error {
     position: absolute;
-    bottom: -1.7rem;
+    bottom: -2.5rem;
     left: 4px;
     font-size: 0.85rem;
     font-weight: 500;
@@ -345,14 +274,24 @@ tr:nth-child(even) {
     line-height: 1rem;
     display: none;
 }
-
-.form-editar-libro .error.visible {
+.form-editar-libro .error.visible,
+.form-agregar-libro .error.visible {
     display: block;
 }
 
-/* Botón principal alineado */
-.form-editar-libro .btn-primario {
-    align-self: flex-end;
+/* Contenedor de botones: siempre debajo de los inputs */
+.acciones-form {
+    width: 100%;
+    margin-top: 2.2rem;
+    display: flex;
+    justify-content: space-between; /* poner a la derecha. usar center para centrar */
+    gap: 1rem;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Botones (mantener estilos previos) */
+.btn-primario {
     background-color: var(--color-acento);
     color: #fff;
     padding: 0.9rem 1.8rem;
@@ -366,14 +305,38 @@ tr:nth-child(even) {
     box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
 }
 
+.form-agregar-libro .btn-primario {
+    background-color: var(--color-acento);
+    color: #fff;
+    padding: 0.9rem 1.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 3rem;
+    transition: background 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
+}
+
+.angryButton {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.9rem 1.6rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .form-editar-libro .btn-primario:hover {
     background-color: var(--color-primario);
     transform: translateY(-1px);
 }
 
-/* Botón cancelar */
+/* Botón Cancelar */
 .form-editar-libro .angryButton {
-    background-color: #e74c3c;
+    background-color: var(--rojo-error);
     color: #fff;
     padding: 0.9rem 1.8rem;
     border: none;
@@ -386,6 +349,6 @@ tr:nth-child(even) {
 }
 
 .form-editar-libro .angryButton:hover {
-    background-color: #c0392b;
+    background-color: #96281d;
     transform: translateY(-1px);
 }

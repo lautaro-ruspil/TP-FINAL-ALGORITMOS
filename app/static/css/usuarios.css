@@ -27,6 +27,72 @@ main {
 }
 
 /* ===========================
+   FORMULARIO FILTRADO
+=========================== */
+
+#filtrado {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    background-color: #fff;
+    border: 2px solid var(--color-borde);
+    border-left: 6px solid var(--color-acento);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#filtrado label {
+    font-weight: 600;
+    color: var(--color-primario-oscuro);
+}
+
+#filtrado select,
+#filtrado input[type="text"] {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: var(--color-card);
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+#filtrado select:focus,
+#filtrado input[type="text"]:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 6px rgba(72, 159, 181, 0.3);
+    outline: none;
+}
+
+/* Botones del filtrado */
+#filtrado button {
+    background-color: var(--color-acento);
+    color: #fff;
+    padding: 0.8rem 1.3rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+#filtrado button:hover {
+    background-color: var(--color-primario);
+    transform: translateY(-1px);
+}
+
+/* Botón limpiar */
+#filtrado .angryButton {
+    background-color: #e74c3c;
+}
+#filtrado .angryButton:hover {
+    background-color: #c0392b;
+}
+
+/* ===========================
    TABLA DE USUARIOS
 =========================== */
 

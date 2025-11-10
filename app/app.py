@@ -2,7 +2,7 @@ from flask import Flask, flash, jsonify, render_template, request, redirect, url
 from models.biblioteca import Biblioteca
 from models.libro import Libro
 from models.usuario import Usuario
-from utils.validaciones import  validar_libro_form
+
 
 app = Flask(__name__)
 
@@ -20,16 +20,16 @@ biblioteca.agregar_libro(lib3)
 # Cargar usuarios iniciales
 biblioteca.agregar_usuario(
     Usuario(
-        1,"Lautaro", "Ruspil", 23457382, "2284-225443", "Tierra del Fuego", 1340, [lib1, lib2]
+        1,"Lautaro", "Ruspil", 23457382, "2284-225443", "Tierra del Fuego", 1340, 
     )
 )
 biblioteca.agregar_usuario(
     Usuario(
-        2,"Franco", "Dell", 12345678, "2284-124443", "Tierra del Fuego", 1123, [lib1]
+        2,"Franco", "Dell", 12345678, "2284-124443", "Tierra del Fuego", 1123, 
     )
 )
 biblioteca.agregar_usuario(
-    Usuario(3,"Pepe", "Martinez", 23457382, "2284-225443", "Hornos", 2020, [lib3])
+    Usuario(3,"Pepe", "Martinez", 23457382, "2284-225443", "Hornos", 2020)
 )
 
 
@@ -45,24 +45,21 @@ def inicio():
 @app.route("/libros", methods=["GET", "POST"])
 def libros():
     if request.method == "POST":
-        valido, errores = validar_libro_form(request.form)
-        if not valido:
-            q = request.args.get("q", "").lower()
-            books = (
-                [l for l in biblioteca.libros if q in l.titulo.lower()]
-                if q
-                else biblioteca.libros
-            )
-            return render_template("libros.html", books=books, q=q, errores=errores, form=request.form, active_page="libros")
-
+        #  Solo recibe los datos (ya validados en el front)
         titulo = request.form["titulo"]
         autor = request.form["autor"]
         genero = request.form["genero"]
-        nuevo_libro = Libro(len(biblioteca.libros) + 1, titulo, autor, genero)
+
+        nuevo_libro = Libro(
+            len(biblioteca.libros) + 1,
+            titulo,
+            autor,
+            genero
+        )
         biblioteca.agregar_libro(nuevo_libro)
         return redirect(url_for("libros"))
 
-
+    # GET: mostrar lista de libros con filtros y orden
     q = request.args.get("q", "").lower()
     campo = request.args.get("campo", "titulo")
     orden = request.args.get("orden", "Ascendente")
@@ -72,7 +69,7 @@ def libros():
     else:
         books = biblioteca.libros
 
-    reverse = True if orden == "Descendente" else False
+    reverse = orden == "Descendente"
     books.sort(key=lambda x: getattr(x, campo).lower(), reverse=reverse)
 
     return render_template(
@@ -81,6 +78,8 @@ def libros():
         q=q,
         campo=campo,
         orden=orden,
+        disponibles=biblioteca.disponibles(),
+        prestados=biblioteca.prestados(),
         active_page="libros"
     )
 
@@ -108,7 +107,8 @@ def buscar_libros():
             "titulo": l.titulo,
             "autor": l.autor,
             "genero": l.genero,
-            "prestado": l.prestado
+            "stock": l.stock,
+            "prestado": l.prestados
         }
         for l in libros_filtrados
     ])
@@ -123,26 +123,45 @@ def editar(id_libro):
         return "Libro no encontrado", 404
 
     if request.method == "POST":
-        valido, errores = validar_libro_form(request.form)
-        if valido:
-            libro.titulo = request.form["titulo"]
-            libro.autor = request.form["autor"]
-            libro.genero = request.form["genero"]
-            return redirect(url_for("libros"))
+        libro.titulo = request.form["titulo"]
+        libro.autor = request.form["autor"]
+        libro.genero = request.form["genero"]
+        nuevo_stock = int(request.form["stock"])
+        # Evita que se reduzca el stock
+        if nuevo_stock > libro.stock:
+            diferencia = nuevo_stock - libro.stock
+            libro.stock += diferencia  # solo aumenta
         else:
-            return render_template(
-                "editar_libro.html", libro=libro, errores=errores, form=request.form
-            )
+            # si intentan poner menos, se mantiene igual
+            pass
+        return redirect(url_for("libros"))
 
-    return render_template("editar_libro.html", libro=libro, errores={}, form=None)
+    # Si es GET, mostrar el formulario con los datos actuales
+    return render_template("editar_libro.html", libro=libro)
 
-@app.route("/devolver/<int:id_libro>", methods=["POST"])
-def devolver(id_libro):
-    for libro in biblioteca.libros:
-        if libro.id_libro == id_libro:
-            libro.prestado = False
-            break
-    return redirect(url_for("libros"))
+@app.route('/devolver_libro/<int:id_usuario>', methods=['GET'])
+def devolver_libro(id_usuario):
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    if not usuario:
+        return "Usuario no encontrado", 404
+
+    # Solo mostramos los libros que el usuario tiene
+    return render_template('devolver_libro.html', usuario=usuario)
+
+@app.route('/confirmar_devolucion/<int:id_usuario>/<int:id_libro>', methods=['POST'])
+def confirmar_devolucion(id_usuario, id_libro):
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    libro = next((l for l in biblioteca.libros if l.id_libro == id_libro), None)
+
+    if not usuario or not libro:
+        return jsonify({"ok": False, "msg": "Usuario o libro no encontrado"}), 404
+
+    if libro in usuario.libros:
+        usuario.libros.remove(libro)
+        libro.devolver()
+        return jsonify({"ok": True, "msg": f"El libro '{libro.titulo}' fue devuelto correctamente."})
+    else:
+        return jsonify({"ok": False, "msg": "El usuario no tiene este libro prestado."})
 
 
 @app.route("/eliminar/<int:id_libro>", methods=["POST"])
@@ -151,21 +170,12 @@ def eliminar(id_libro):
     return redirect(url_for("libros"))
 
 
-# ---------- PRÉSTAMOS ----------
-@app.route("/prestamos", methods=["GET"])
-def prestamos():
-    q = request.args.get("q", "")
-    prestados = [l for l in biblioteca.libros if l.prestado]
-    if q:
-        prestados = [l for l in prestados if q.lower() in l.titulo.lower()]
-    return render_template("prestamos.html", books=prestados, active_page="prestamos")
-
 
 # ---------- USUARIOS ----------
 @app.route("/usuarios", methods=["GET", "POST"])
 def usuarios():
     if request.method == "POST":
-        # Flask solo recibe los datos ya validados por el navegador
+        #  Solo recibe los datos del formulario (ya validados en el front)
         nombre = request.form.get("nombre", "").strip()
         apellido = request.form.get("apellido", "").strip()
         dni = request.form.get("dni", "").strip()
@@ -185,10 +195,69 @@ def usuarios():
         biblioteca.agregar_usuario(nuevo)
         return redirect(url_for("usuarios"))
 
-    # GET: mostrar todos los usuarios (o buscar)
-    q = request.args.get("q", "")
-    users = biblioteca.buscar_usuarios(q) if q else biblioteca.users
-    return render_template("usuarios.html", users=users, active_page="usuarios")
+    # GET: Mostrar usuarios con búsqueda y orden
+    q = request.args.get("q", "").lower()
+    campo = request.args.get("campo", "nombre")
+    orden = request.args.get("orden", "Ascendente")
+
+    users = biblioteca.users.copy()
+
+    # Filtrado
+    if q:
+        users = [
+            u for u in users
+            if q in getattr(u, campo).lower()
+            or (campo == "libros" and any(q in l.titulo.lower() for l in u.libros))
+        ]
+
+    # Ordenamiento
+    reverse = orden == "Descendente"
+    users.sort(key=lambda u: getattr(u, campo).lower() if isinstance(getattr(u, campo), str) else str(getattr(u, campo)), reverse=reverse)
+
+    return render_template(
+        "usuarios.html",
+        users=users,
+        q=q,
+        campo=campo,
+        orden=orden,
+        active_page="usuarios"
+    )
+
+@app.route('/buscar_usuarios')
+def buscar_usuarios():
+    q = request.args.get('q', '').lower()
+    campo = request.args.get('campo', 'nombre')
+    orden = request.args.get('orden', 'Ascendente')
+
+    users = Usuario.query.all()
+    filtrados = []
+
+    for u in users:
+        if campo == "nombre" and q in u.nombre.lower():
+            filtrados.append(u)
+        elif campo == "apellido" and q in u.apellido.lower():
+            filtrados.append(u)
+        elif campo == "dni" and q in str(u.dni):
+            filtrados.append(u)
+        elif campo == "libros" and any(q in l.titulo.lower() for l in u.libros):
+            filtrados.append(u)
+
+    reverse = orden == "Descendente"
+
+    filtrados.sort(key=lambda x: getattr(x, campo if campo in ["nombre", "apellido", "dni"] else "nombre"), reverse=reverse)
+
+    return jsonify([
+        {
+            "id_usuario": u.id_usuario,
+            "nombre": u.nombre,
+            "apellido": u.apellido,
+            "dni": u.dni,
+            "telefono": u.telefono,
+            "direccion": u.direccion,
+            "nro_direccion": u.nro_direccion,
+            "libros": [{"titulo": l.titulo, "autor": l.autor} for l in u.libros]
+        } for u in filtrados
+    ])
 
 @app.route('/prestar_libro_usuario/<int:id_usuario>', methods=['GET'])
 def seleccionar_libro_prestamo(id_usuario):
@@ -198,7 +267,7 @@ def seleccionar_libro_prestamo(id_usuario):
         return "Usuario no encontrado", 404
 
     # Filtrar libros que no estén prestados
-    libros_disponibles = [libro for libro in biblioteca.libros if not getattr(libro, 'prestado', False)]
+    libros_disponibles = [libro for libro in biblioteca.libros if libro.stock > 0]
 
     return render_template(
         'libros_disponibles.html',
@@ -222,16 +291,16 @@ def confirmar_prestamo(id_usuario, id_libro):
             "msg": f"El usuario {usuario.nombre} ya tiene el libro '{libro.titulo}'."
         }), 400
 
-    # Libro ya prestado
-    if getattr(libro, 'prestado', False):
+    # No hay stock disponible
+    if libro.stock <= 0:
         return jsonify({
             "ok": False,
-            "msg": f"El libro '{libro.titulo}' ya está prestado."
+            "msg": f"No hay ejemplares disponibles de '{libro.titulo}'."
         }), 400
 
     # Registrar préstamo
     usuario.libros.append(libro)
-    libro.prestado = True
+    libro.prestar()  # 👈 ahora usa el método que resta stock y suma prestados
 
     return jsonify({
         "ok": True,
