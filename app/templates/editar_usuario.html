@@ -1,0 +1,195 @@
+{% extends "base.html" %} {% block title %}Editar Usuario{% endblock %} {% block
+extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/editar_usuario.css') }}"
+/>
+{% endblock %} {% block content %}
+<h2>Editar Usuario</h2>
+
+<form
+    action="{{ url_for('actualizar_usuario', id_usuario=usuario.id_usuario) }}"
+    method="post"
+    class="form-editar"
+    id="form-editar"
+>
+    <div>
+        <label for="nombre">Nombres:</label>
+        <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value="{{ usuario.nombre }}"
+            readonly
+        />
+        <span class="no-editable">(No editable)</span>
+    </div>
+
+    <div>
+        <label for="apellido">Apellido:</label>
+        <input
+            type="text"
+            id="apellido"
+            name="apellido"
+            value="{{ usuario.apellido }}"
+            readonly
+        />
+        <span class="no-editable">(No editable)</span>
+    </div>
+
+    <div>
+        <label for="dni">DNI:</label>
+        <input
+            type="text"
+            id="dni"
+            name="dni"
+            value="{{ usuario.dni }}"
+            readonly
+        />
+        <span class="no-editable">(No editable)</span>
+    </div>
+
+    <div>
+        <label for="telefono">Teléfono:</label>
+        <input
+            type="text"
+            id="telefono"
+            name="telefono"
+            value="{{ usuario.telefono }}"
+        />
+        <p class="error error-telefono"></p>
+    </div>
+
+    <div>
+        <label for="direccion">Dirección:</label>
+        <input
+            type="text"
+            id="direccion"
+            name="direccion"
+            value="{{ usuario.direccion }}"
+        />
+        <p class="error error-direccion"></p>
+    </div>
+
+    <div>
+        <label for="nro_direccion">N° Dirección:</label>
+        <input
+            type="number"
+            id="nro_direccion"
+            name="nro_direccion"
+            value="{{ usuario.nro_direccion }}"
+        />
+        <p class="error error-nro_direccion"></p>
+    </div>
+
+    <div class="botones">
+        <button type="submit">Guardar Cambios</button>
+        <a href="{{ url_for('usuarios') }}" class="btn-cancelar">Cancelar</a>
+    </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const regex = {
+            telefono: /^\d{4}-\d{6}$/,
+            direccion: /^.{2,}$/,
+            nro_direccion: /^\d+$/,
+        };
+
+        const mensajes = {
+            telefono: "El teléfono debe tener el formato XXXX-XXXXXX.",
+            direccion: "La dirección debe tener al menos 2 caracteres.",
+            nro_direccion: "El número de dirección debe contener solo números.",
+        };
+
+        const form = document.getElementById("form-editar");
+        const inputs = form.querySelectorAll("input:not([readonly])");
+
+        // Validación en vivo
+        inputs.forEach((input) => {
+            input.addEventListener("input", () => validarCampo(input));
+        });
+
+        // Función de validación individual
+        function validarCampo(input) {
+            const valor = input.value.trim();
+            const error = document.querySelector(`.error-${input.name}`);
+
+            if (valor === "") {
+                error.textContent = "Este campo es obligatorio.";
+                input.classList.add("input-error");
+                return false;
+            } else if (!regex[input.name].test(valor)) {
+                error.textContent = mensajes[input.name];
+                input.classList.add("input-error");
+                return false;
+            } else {
+                error.textContent = "";
+                input.classList.remove("input-error");
+                return true;
+            }
+        }
+
+        // Validación general al enviar
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            let valido = true;
+
+            inputs.forEach((input) => {
+                if (!validarCampo(input)) valido = false;
+            });
+
+            if (!valido) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Formulario incompleto",
+                    text: "Por favor, corrige los errores antes de guardar.",
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+                return;
+            }
+
+            // Confirmación antes de enviar
+            const result = await Swal.fire({
+                title: "¿Guardar cambios?",
+                text: "Se actualizarán los datos del usuario.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "var(--color-primario-oscuro)",
+                cancelButtonColor: "var(--rojo-error)",
+                confirmButtonText: "Sí, guardar",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (!result.isConfirmed) return;
+
+            // Enviar los datos con fetch
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Cambios guardados",
+                    text: "El usuario se actualizó correctamente.",
+                    timer: 2000,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        window.location.href = "{{ url_for('usuarios') }}";
+                    },
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un problema al guardar los cambios.",
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

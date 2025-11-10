@@ -7,7 +7,7 @@ extra_css %}
 />
 {% endblock %} {% block content %}
 
-<h2>Usuarios</h2>
+<h2>Gestión de Usuarios</h2>
 
 {% if users %}
 
@@ -39,14 +39,20 @@ extra_css %}
                 <td>{{user.nro_direccion}}</td>
                 <td>
                     {% if user.libros %} {% for libro in user.libros %}
-                    <p>{{libro.titulo}} - {{libro.autor}}</p>
+                    <p>
+                        {{libro.titulo}} - <br />
+                        <span style="font-weight: 600">{{libro.autor}}</span>
+                    </p>
                     {% endfor %} {% else %}
                     <p>-</p>
                     {% endif %}
                 </td>
                 <td>
                     <div class="container-buttons">
-                        <form>
+                        <form
+                            method="get"
+                            action="{{ url_for('editar_usuario', id_usuario=user.id_usuario) }}"
+                        >
                             <button>Editar</button>
                         </form>
                         <form
@@ -75,47 +81,23 @@ extra_css %}
 
 <hr />
 
-<form action="/usuarios" method="post" class="form-usuario">
+<form action="/usuarios" method="post" class="form-usuario" id="form-usuario">
     <div>
         <label for="nombre">Nombres:</label>
-        <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            placeholder="Juan"
-            value="{{datos.get('nombre') if datos else ''}}"
-        />
-        {% if errores and errores.nombre %}
-        <p class="error">{{errores.nombre}}</p>
-        {% endif %}
+        <input type="text" id="nombre" name="nombre" placeholder="Juan" />
+        <p id="error-nombre" class="error"></p>
     </div>
 
     <div>
         <label for="apellido">Apellido:</label>
-        <input
-            type="text"
-            id="apellido"
-            name="apellido"
-            placeholder="Pérez"
-            value="{{datos.get('apellido') if datos else ''}}"
-        />
-        {% if errores and errores.apellido %}
-        <p class="error">{{errores.apellido}}</p>
-        {% endif %}
+        <input type="text" id="apellido" name="apellido" placeholder="Pérez" />
+        <p id="error-apellido" class="error"></p>
     </div>
 
     <div>
         <label for="dni">DNI:</label>
-        <input
-            type="number"
-            id="dni"
-            name="dni"
-            placeholder="1234567"
-            value="{{datos.get('dni') if datos else ''}}"
-        />
-        {% if errores and errores.dni %}
-        <p class="error">{{errores.dni}}</p>
-        {% endif %}
+        <input type="number" id="dni" name="dni" placeholder="1234567" />
+        <p id="error-dni" class="error"></p>
     </div>
 
     <div>
@@ -125,11 +107,8 @@ extra_css %}
             id="telefono"
             name="telefono"
             placeholder="2284-123456"
-            value="{{datos.get('telefono') if datos else ''}}"
         />
-        {% if errores and errores.telefono %}
-        <p class="error">{{errores.telefono}}</p>
-        {% endif %}
+        <p id="error-telefono" class="error"></p>
     </div>
 
     <div>
@@ -139,11 +118,8 @@ extra_css %}
             id="direccion"
             name="direccion"
             placeholder="hornos"
-            value="{{datos.get('direccion') if datos else ''}}"
         />
-        {% if errores and errores.direccion %}
-        <p class="error">{{errores.direccion}}</p>
-        {% endif %}
+        <p id="error-direccion" class="error"></p>
     </div>
 
     <div>
@@ -153,15 +129,85 @@ extra_css %}
             id="nro_direccion"
             name="nro_direccion"
             placeholder="2025"
-            value="{{datos.get('nro_direccion') if datos else ''}}"
         />
-        {% if errores and errores.nro_direccion %}
-        <p class="error">{{errores.nro_direccion}}</p>
-        {% endif %}
+
+        <p id="error-nro_direccion" class="error"></p>
     </div>
 
     <button type="submit">Agregar</button>
 </form>
+<!-- Validacion de formulario -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const regex = {
+            nombre: /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,}$/,
+            apellido: /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,}$/,
+            dni: /^\d{7,8}$/,
+            telefono: /^\d{4}-\d{6}$/,
+            direccion: /^.{2,}$/,
+            nro_direccion: /^\d+$/,
+        };
+
+        const mensajes = {
+            nombre: "El nombre debe tener al menos 3 letras y solo contener letras.",
+            apellido:
+                "El apellido debe tener al menos 3 letras y solo contener letras.",
+            dni: "El DNI debe tener 7 u 8 dígitos numéricos.",
+            telefono: "El teléfono debe tener el formato XXXX-XXXXXX.",
+            direccion: "La dirección debe tener al menos 2 caracteres.",
+            nro_direccion: "El número de dirección debe contener solo números.",
+        };
+
+        const form = document.getElementById("form-usuario");
+        const inputs = document.querySelectorAll(".form-usuario input");
+
+        // Validación en vivo
+        inputs.forEach((input) => {
+            input.addEventListener("input", () => validarCampo(input));
+        });
+
+        // Función que valida cada campo
+        function validarCampo(input) {
+            const valor = input.value.trim();
+            const error = input.parentElement.querySelector(".error");
+
+            if (valor === "") {
+                error.textContent = "Este campo es obligatorio.";
+                input.classList.add("input-error");
+                return false;
+            } else if (!regex[input.name].test(valor)) {
+                error.textContent = mensajes[input.name];
+                input.classList.add("input-error");
+                return false;
+            } else {
+                error.textContent = "";
+                input.classList.remove("input-error");
+                return true;
+            }
+        }
+
+        // Bloquear envío si hay errores
+        form.addEventListener("submit", (e) => {
+            let valido = true;
+
+            inputs.forEach((input) => {
+                const ok = validarCampo(input);
+                if (!ok) valido = false;
+            });
+
+            if (!valido) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: "error",
+                    title: "Formulario incompleto",
+                    text: "Por favor, corrige los errores antes de continuar.",
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+            }
+        });
+    });
+</script>
+<!-- Sweet alert para confirmación de eliminación de usuario -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function mostrarAlerta(e, form) {
@@ -172,8 +218,8 @@ extra_css %}
             text: "Esta acción no se puede deshacer.",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
+            confirmButtonColor: "var(--rojo-error)",
+            cancelButtonColor: "var(--color-primario-oscuro)",
             confirmButtonText: "Sí, eliminar",
             cancelButtonText: "Cancelar",
         }).then((result) => {
@@ -184,6 +230,20 @@ extra_css %}
 
         return false; // evita que el form se envíe de inmediato
     }
+</script>
+<!-- Script para guardar la posicion del scroll donde estaba el usuario y no se recargue la pagina y redireccione hacia arriba del todo -->
+<script>
+    window.addEventListener("beforeunload", () => {
+        localStorage.setItem("scrollPosition", window.scrollY);
+    });
+
+    window.addEventListener("load", () => {
+        const scrollPosition = localStorage.getItem("scrollPosition");
+        if (scrollPosition) {
+            window.scrollTo(0, scrollPosition);
+            localStorage.removeItem("scrollPosition");
+        }
+    });
 </script>
 
 {% endblock %}

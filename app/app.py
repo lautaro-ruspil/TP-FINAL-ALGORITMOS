@@ -1,8 +1,8 @@
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, jsonify, render_template, request, redirect, url_for
 from models.biblioteca import Biblioteca
 from models.libro import Libro
 from models.usuario import Usuario
-from utils.validaciones import validar_usuario_form, validar_libro_form
+from utils.validaciones import  validar_libro_form
 
 app = Flask(__name__)
 
@@ -84,6 +84,35 @@ def libros():
         active_page="libros"
     )
 
+# ---------- BÚSQUEDA libros ----------
+@app.route("/buscar_libros")
+def buscar_libros():
+    q = request.args.get("q", "").lower()
+    campo = request.args.get("campo", "titulo")
+    orden = request.args.get("orden", "Ascendente")
+
+    # Filtrar según búsqueda
+    if q:
+        libros_filtrados = [l for l in biblioteca.libros if q in getattr(l, campo).lower()]
+    else:
+        libros_filtrados = biblioteca.libros.copy()
+
+    # Ordenar resultados
+    reverse = True if orden == "Descendente" else False
+    libros_filtrados.sort(key=lambda x: getattr(x, campo).lower(), reverse=reverse)
+
+    # Devolver JSON
+    return jsonify([
+        {
+            "id_libro": l.id_libro,
+            "titulo": l.titulo,
+            "autor": l.autor,
+            "genero": l.genero,
+            "prestado": l.prestado
+        }
+        for l in libros_filtrados
+    ])
+
 
 
 
@@ -136,29 +165,27 @@ def prestamos():
 @app.route("/usuarios", methods=["GET", "POST"])
 def usuarios():
     if request.method == "POST":
-        valido, errores = validar_usuario_form(request.form)
-        if not valido:
-            users = biblioteca.users
-            return render_template(
-                "usuarios.html",
-                errores=errores,
-                datos=request.form,
-                users=users,
-                active_page="usuarios",
-            )
+        # Flask solo recibe los datos ya validados por el navegador
+        nombre = request.form.get("nombre", "").strip()
+        apellido = request.form.get("apellido", "").strip()
+        dni = request.form.get("dni", "").strip()
+        telefono = request.form.get("telefono", "").strip()
+        direccion = request.form.get("direccion", "").strip()
+        nro_direccion = request.form.get("nro_direccion", "").strip()
 
         nuevo = Usuario(
             len(biblioteca.users) + 1,
-            request.form["nombre"],
-            request.form["apellido"],
-            request.form["dni"],
-            request.form["telefono"],
-            request.form["direccion"],
-            request.form["nro_direccion"],
+            nombre,
+            apellido,
+            dni,
+            telefono,
+            direccion,
+            nro_direccion
         )
         biblioteca.agregar_usuario(nuevo)
         return redirect(url_for("usuarios"))
 
+    # GET: mostrar todos los usuarios (o buscar)
     q = request.args.get("q", "")
     users = biblioteca.buscar_usuarios(q) if q else biblioteca.users
     return render_template("usuarios.html", users=users, active_page="usuarios")
@@ -182,26 +209,62 @@ def seleccionar_libro_prestamo(id_usuario):
 
 @app.route('/confirmar_prestamo/<int:id_usuario>/<int:id_libro>', methods=['POST'])
 def confirmar_prestamo(id_usuario, id_libro):
-    # Buscar usuario y libro en memoria
     usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
     libro = next((l for l in biblioteca.libros if l.id_libro == id_libro), None)
 
     if not usuario or not libro:
-        return "Usuario o libro no encontrado", 404
+        return jsonify({"ok": False, "msg": "Usuario o libro no encontrado."}), 404
 
-    # Si el libro ya está prestado, mostrar mensaje
+    # Ya tiene ese libro
+    if any(l.id_libro == id_libro for l in usuario.libros):
+        return jsonify({
+            "ok": False,
+            "msg": f"El usuario {usuario.nombre} ya tiene el libro '{libro.titulo}'."
+        }), 400
+
+    # Libro ya prestado
     if getattr(libro, 'prestado', False):
-        return f"El libro '{libro.titulo}' ya está prestado.", 400
+        return jsonify({
+            "ok": False,
+            "msg": f"El libro '{libro.titulo}' ya está prestado."
+        }), 400
 
-    # Asignar libro al usuario
+    # Registrar préstamo
     usuario.libros.append(libro)
-
-    # Marcar como prestado
     libro.prestado = True
 
-    # Redirigir con mensaje
-    return redirect(url_for('usuarios'))
+    return jsonify({
+        "ok": True,
+        "msg": f"Libro '{libro.titulo}' prestado correctamente a {usuario.nombre}."
+    })
 
+# Editar información de usuario
+@app.route('/editar_usuario/<int:id_usuario>', methods=['GET'])
+def editar_usuario(id_usuario):
+    # Buscar el usuario
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    if not usuario:
+        return "Usuario no encontrado", 404
+
+    return render_template('editar_usuario.html', usuario=usuario, active_page="usuarios")
+
+# Confirmar actualizacion de usuario
+@app.route('/actualizar_usuario/<int:id_usuario>', methods=['POST'])
+def actualizar_usuario(id_usuario):
+    #Buscar el usuario por ID
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    if not usuario:
+        return "Usuario no encontrado", 404
+
+    # Actualizamos los campos editables
+    usuario.nombre = request.form['nombre']
+    usuario.apellido = request.form['apellido']
+    usuario.telefono = request.form['telefono']
+    usuario.direccion = request.form['direccion']
+    usuario.nro_direccion = request.form['nro_direccion']
+
+    # No se permite editar el DNI ni los libros directamente
+    return redirect(url_for('usuarios'))
 
 
 # ---------- ELIMINAR USUARIO ----------

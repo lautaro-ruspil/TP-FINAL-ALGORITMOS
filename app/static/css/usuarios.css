@@ -1,243 +1,242 @@
-:root {
-    /* Variables de color y tipografía utilizadas */
-    --azul: #3a5a91;
-    --azul-hover: #2e4a7a;
-    --card: #ffffff;
-    --borde: #d1d5db;
-    --gris-texto: #4b5563;
-    --fondo-claro: #f3f4f6;
-    --rojo-error: #d93025;
-}
-
-/* ===========================
-   USUARIOS - ESTILO MODERNO
-=========================== */
-
 /* -------- TÍTULO -------- */
 h2 {
-	font-size: 2rem;
-	font-weight: 700;
-	margin-bottom: 1.5rem;
-	color: var(--azul);
-	text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--color-primario-oscuro);
+    text-align: center;
 }
 
 /* -------- SEPARADOR -------- */
 hr {
-	border: none;
-	border-top: 1px solid var(--borde);
-	margin: 3rem 0; /* Más separación del formulario */
-	width: 100%;
-	max-width: 1100px;
+    border: none;
+    border-top: 1px solid var(--borde);
+    margin: 3rem 0;
+    width: 100%;
+    max-width: 1100px;
 }
 
 /* -------- CONTENEDOR PRINCIPAL -------- */
 main {
-	background-color: var(--card);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-	border-radius: 14px;
-	padding: 2.5rem;
-	width: 95%;
-	max-width: 1100px;
-	margin: 2rem auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 95%;
+    max-width: 1100px;
+    margin: 2rem auto;
 }
 
 /* ===========================
    TABLA DE USUARIOS
 =========================== */
 
-/* Contenedor para scroll horizontal en pantallas pequeñas */
 .table-container {
-    overflow-x: auto; /* Permite el scroll horizontal */
+    overflow-x: auto;
     margin-top: 1rem;
-    border-radius: 12px; 
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 table {
-	width: 100%;
-	border-spacing: 0;
-	font-size: 0.95rem;
-	min-width: 1000px; /* Asegura un ancho mínimo para que las columnas no se aplasten */
-	table-layout: auto;
-	border-collapse: collapse; /* Para bordes limpios */
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+    font-size: 0.95rem;
 }
 
-table th,
-table td {
-	padding: 1rem;
-	text-align: left;
-    border-bottom: 1px solid var(--fondo-claro); /* Borde sutil para separar filas */
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-borde);
 }
 
-
-table th {
-	background-color: var(--fondo-claro);
-	color: var(--azul);
-	font-weight: 600;
-	text-transform: uppercase;
-	font-size: 0.8rem;
-	padding: 1.25rem 1rem;
+th {
+    background-color: var(--color-primario-claro);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    text-align: center;
 }
 
-table td {
-	color: var(--gris-texto);
-	vertical-align: top; /* Mantener top para los libros */
+td {
+    vertical-align: top;
+    text-align: center;
 }
 
-table tr:hover {
-	background-color: #eaf1fc;
-	transition: background 0.2s;
+tr:nth-child(even) {
+    background-color: var(--color-gris-suave);
 }
 
-/* Ajuste específico: Teléfono (5ta columna) */
-table th:nth-child(5),
-table td:nth-child(5) {
-	white-space: nowrap;
-}
-
-/* Libros en propiedad (8va columna) - CRUCIAL para que el texto se ajuste */
-table td:nth-child(8) {
+/* Ajustes de columnas */
+td:nth-child(8) {
     max-width: 250px;
     min-width: 180px;
-    white-space: normal; /* Permite el salto de línea */
-    word-wrap: break-word; /* Fuerza el corte de palabras si es necesario */
+    white-space: normal;
+    word-wrap: break-word;
     line-height: 1.4;
     font-size: 0.9rem;
 }
 
-/* Espacio entre los párrafos de libros */
-table td:nth-child(8) p {
-    margin: 0.4rem 0; 
-    padding: 0;
+td:nth-child(8) p {
+    margin: 0.4rem 0;
 }
-table td:nth-child(8) p:first-child { margin-top: 0; }
-table td:nth-child(8) p:last-child { margin-bottom: 0; }
 
-
-/* Acciones (9na columna) */
-table td:nth-child(9) {
+td:nth-child(9) {
     white-space: nowrap;
     width: 1%;
 }
 
 /* ===========================
-   BOTONES DE ACCIÓN EN TABLA
+   BOTONES DE ACCIÓN
 =========================== */
+
 .container-buttons {
-	display: flex;
-	flex-direction: column;
-	gap: 6px; /* Ligeramente más compacto */
-	align-items: center; 
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
 }
 
 .container-buttons form {
-    width: 100%; 
+    width: 100%;
 }
 
 .container-buttons form button {
-	width: 100%; 
-	padding: 0.5rem 0.8rem;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 600;
-	font-size: 0.85rem; 
-	transition: transform 0.1s, background 0.2s;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-	text-align: center;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .container-buttons form button:hover {
-	transform: translateY(-1px); /* Efecto de elevación */
+    transform: translateY(-1px);
+}
+
+/* Botón editar */
+.container-buttons form:first-child button {
+    background-color: var(--color-primario);
+    color: #fff;
+}
+
+.container-buttons form:first-child button:hover {
+    background-color: var(--color-primario-oscuro);
 }
 
 /* Botón eliminar */
-.container-buttons form button:first-child {
-	background-color: #e53935;
-	color: #fff;
+.container-buttons form:nth-child(2) button {
+    background-color: #e74c3c;
+    color: #fff;
 }
 
-.container-buttons form button:first-child:hover {
-	background-color: #c62828;
+.container-buttons form:nth-child(2) button:hover {
+    background-color: #c0392b;
 }
 
 /* Botón prestar */
-.container-buttons form button:last-child {
-	background-color: var(--azul);
-	color: #fff;
+.container-buttons form:last-child button {
+    background-color: var(--color-acento);
+    color: #fff;
 }
 
-.container-buttons form button:last-child:hover {
-	background-color: var(--azul-hover);
+.container-buttons form:last-child button:hover {
+    background-color: var(--color-primario);
 }
-
 
 /* ===========================
    FORMULARIO DE USUARIO
 =========================== */
+
 .form-usuario {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Aumentado a 280px min-width */
-	gap: 2.5rem 2rem; /* Más espacio entre filas y columnas */
-	background-color: var(--fondo-claro);
-	padding: 3rem; /* Más aire interior para el formulario */
-	border-radius: 12px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-	margin-top: 3rem; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem 2.5rem;
+    padding: 3rem;
+    border-radius: 12px;
+    margin-top: 3rem;
 }
 
 .form-usuario div {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
 }
 
 .form-usuario label {
-	font-weight: 600;
-	color: var(--azul);
-	margin-bottom: 0.75rem; /* Aumento crucial para separar label del input */
-	font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--azul);
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
 }
 
 .form-usuario input {
-	padding: 0.9rem 1rem;
-	border: 1px solid var(--borde);
-	border-radius: 8px;
-	font-size: 1rem;
-	background-color: #fff;
-	transition: all 0.2s;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 0.8rem;
 }
 
-.form-usuario input:focus {
-	outline: none;
-	border-color: var(--azul);
-	box-shadow: 0 0 6px rgba(58, 90, 145, 0.4);
+/* Estilo al enfocar (solo si no hay error) */
+.form-usuario input:focus:not(.input-error) {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 6px rgba(72, 159, 181, 0.4);
+    outline: none;
 }
 
-/* -------- MENSAJES DE ERROR -------- */
+/* Estilo de error */
+input.input-error {
+    border-color: var(--rojo-error) !important;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
+    outline: none !important;
+}
+
+/* Al enfocar un input con error */
+input.input-error:focus {
+    border-color: var(--rojo-error) !important;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Quitar flechas de los inputs tipo number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Mensajes de error */
 .error {
-	color: var(--rojo-error);
-	font-size: 0.85rem;
-	margin-top: 0.4rem;
-	font-weight: 500;
+    color: var(--rojo-error);
+    font-size: 0.85rem;
+    margin-top: -0.4rem;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
 }
 
 /* -------- BOTÓN DE ENVÍO -------- */
 .form-usuario button {
-	grid-column: 1 / -1;
-	background-color: var(--azul);
-	color: #fff;
-	padding: 1rem; 
-	border: none;
-	border-radius: 8px;
-	font-size: 1.05rem;
-	font-weight: 600;
-	cursor: pointer;
-	transition: background 0.2s, transform 0.1s;
-	box-shadow: 0 4px 10px rgba(58, 90, 145, 0.3); 
+    grid-column: 1 / -1;
+    background-color: var(--color-acento);
+    color: #fff;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
 }
 
 .form-usuario button:hover {
-	background-color: var(--azul-hover);
-	transform: translateY(-1px);
+    background-color: var(--color-primario);
+    transform: translateY(-1px);
 }

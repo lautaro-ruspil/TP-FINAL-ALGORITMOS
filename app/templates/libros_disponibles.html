@@ -33,6 +33,11 @@ endblock %} {% block extra_css %}
                 <td>{{ libro.genero }}</td>
                 <td>
                     <div class="container-action">
+                        {% if libro in usuario.libros %}
+                        <button class="btn-prestado" disabled>
+                            Ya prestado
+                        </button>
+                        {% else %}
                         <form
                             action="{{ url_for('confirmar_prestamo', id_usuario=usuario.id_usuario, id_libro=libro.id_libro) }}"
                             method="post"
@@ -41,6 +46,7 @@ endblock %} {% block extra_css %}
                                 Prestar
                             </button>
                         </form>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -53,9 +59,61 @@ endblock %} {% block extra_css %}
 </div>
 
 <div class="container-volver">
-    <a href="{{ url_for('usuarios') }}" class="btn-volver">
-        ← Volver a Usuarios
-    </a>
+    <a href="{{ url_for('usuarios') }}" class="btn-volver"> Cancelar </a>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".btn-prestar").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const form = event.target.closest("form");
 
+            const confirm = await Swal.fire({
+                title: "¿Confirmar préstamo?",
+                text: "¿Deseas prestar este libro al usuario?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "var(--color-primario-oscuro)",
+                cancelButtonColor: "var(--rojo-error)",
+                confirmButtonText: "Sí, prestar",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            Swal.fire({
+                title: "Procesando...",
+                text: "Registrando el préstamo, por favor espera.",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            const response = await fetch(form.action, {
+                method: "POST",
+            });
+
+            const data = await response.json();
+
+            Swal.close();
+
+            if (data.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Préstamo exitoso",
+                    text: data.msg,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    willClose: () => window.location.reload(),
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "No se pudo realizar el préstamo",
+                    text: data.msg,
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}
