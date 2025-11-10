@@ -3,48 +3,6 @@ block content %}
 <link rel="stylesheet" href="../static/css/libros.css" />
 <h2>Gestión de Libros</h2>
 
-<form id="formAgregar" method="POST" class="form-agregar-libro">
-    <div class="campo">
-        <label for="input-titulo">Titulo:</label>
-        <input
-            id="input-titulo"
-            type="text"
-            name="titulo"
-            placeholder="Ej: Cien años de soledad"
-            value="{{ form.titulo if form else '' }}"
-        />
-        <span class="error" data-field="titulo"></span>
-    </div>
-
-    <div class="campo">
-        <label for="input-autor">Autor:</label>
-        <input
-            id="input-autor"
-            type="text"
-            name="autor"
-            placeholder="Ej: Gabriel García Márquez"
-            value="{{ form.autor if form else '' }}"
-        />
-        <span class="error" data-field="autor"></span>
-    </div>
-
-    <div class="campo">
-        <label for="input-genero">Género:</label>
-        <input
-            id="input-genero"
-            type="text"
-            name="genero"
-            placeholder="Ej: Novela"
-            value="{{ form.genero if form else '' }}"
-        />
-        <span class="error" data-field="genero"></span>
-    </div>
-
-    <button type="submit" class="btn-primario">Agregar Libro</button>
-</form>
-
-<hr />
-
 <!-- Búsqueda -->
 <form id="filtrado" method="get" action="{{ url_for('libros') }}">
     <label>
@@ -91,22 +49,18 @@ block content %}
             <td>{{ book.titulo }}</td>
             <td>{{ book.autor }}</td>
             <td>{{ book.genero }}</td>
-            <td class="{{ 'prestado' if book.prestado else 'disponible' }}">
-                {{ 'Prestado' if book.prestado else 'Disponible' }}
+            <td class="estado-resumen">
+                {{ book.stock }} <span class="disponible"">disponibles</span> - {{ book.prestados }}  <span class="prestado">prestados</span>
             </td>
             <td>
                 <div class="container-buttons">
-                    <form onsubmit="mostrarAlerta(event,this)">
-                        <button class="eliminar">Eliminar</button>
-                    </form>
                     <form action="{{ url_for('editar', id_libro= book.id_libro) }}">
                         <button class="editar">Editar</button>
                     </form>
-                    {% if book.prestado %}
-                        <form>
-                            <button class="devolver">Devolver</button>
-                        </form>
-                    {% endif %}
+                    <form method="post"  onsubmit="mostrarAlerta(event,this)" action="{{ url_for('eliminar', id_libro= book.id_libro) }}">
+                        <button class="eliminar">Eliminar</button>
+                    </form>
+
                 </div>
             </td>
         </tr>
@@ -117,6 +71,56 @@ block content %}
 {% else %}
 <p>No hay libros registrados.</p>
 {% endif %}
+<hr />
+<form id="formAgregar" method="POST" class="form-agregar-libro">
+    <div class="campos-form">
+        <div class="campo">
+            <label for="input-titulo">Título:</label>
+            <input
+                id="input-titulo"
+                type="text"
+                name="titulo"
+                placeholder="Ej: Rayuela"
+            />
+            <span class="error" data-field="titulo"></span>
+        </div>
+
+        <div class="campo">
+            <label for="input-autor">Autor:</label>
+            <input
+                id="input-autor"
+                type="text"
+                name="autor"
+                placeholder="Ej: Julio Cortázar"
+            />
+            <span class="error" data-field="autor"></span>
+        </div>
+
+        <div class="campo">
+            <label for="input-genero">Género:</label>
+            <input
+                id="input-genero"
+                type="text"
+                name="genero"
+                placeholder="Ej: Ficción"
+            />
+            <span class="error" data-field="genero"></span>
+        </div>
+
+        <div class="campo">
+            <label for="input-stock">Stock:</label>
+            <input
+                id="input-stock"
+                type="number"
+                name="stock"
+                placeholder="Ej: 20"
+            />
+            <span class="error" data-field="stock"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-primario">Agregar Libro</button>
+</form>
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -250,8 +254,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <td>${book.titulo}</td>
                                 <td>${book.autor}</td>
                                 <td>${book.genero}</td>
-                                <td class="${book.prestado ? 'prestado' : 'disponible'}">
-                                    ${book.prestado ? 'Prestado' : 'Disponible'}
+                                <td class="estado-resumen">
+                                    ${book.stock} <span class="disponible"">disponibles</span> - ${book.prestado}  <span class="prestado">prestados</span>
                                 </td>
                                 <td>
                                     <div class="container-buttons">

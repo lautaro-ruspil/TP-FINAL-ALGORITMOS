@@ -1,16 +1,40 @@
-{% extends "base.html" %} {% block title %}Usuarios{% endblock %} {% block
-extra_css %}
+{% extends "base.html" %}
+{% block title %}Gestión de Usuarios{% endblock %}
 
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/usuarios.css') }}"
-/>
-{% endblock %} {% block content %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
+{% endblock %}
 
+{% block content %}
 <h2>Gestión de Usuarios</h2>
 
-{% if users %}
+<!-- FILTRO DE BÚSQUEDA -->
+<form id="filtrado" method="get" action="{{ url_for('usuarios') }}">
+    <label>
+        Filtrar por
+        <select name="campo" id="campoUsuario">
+            <option value="nombre" {% if campo == 'nombre' %}selected{% endif %}>Nombre</option>
+            <option value="apellido" {% if campo == 'apellido' %}selected{% endif %}>Apellido</option>
+            <option value="dni" {% if campo == 'dni' %}selected{% endif %}>DNI</option>
+            <option value="libros" {% if campo == 'libros' %}selected{% endif %}>Libros</option>
+        </select>
+    </label>
 
+    <label>
+        Ordenar por
+        <select name="orden" id="ordenUsuario">
+            <option value="Ascendente" {% if orden == 'Ascendente' %}selected{% endif %}>Ascendente</option>
+            <option value="Descendente" {% if orden == 'Descendente' %}selected{% endif %}>Descendente</option>
+        </select>
+    </label>
+
+    <input type="text" name="q" id="buscarUsuario" value="{{ q }}" placeholder="Buscar usuario..." />
+    <button type="submit">Buscar</button>
+    <button type="button" class="angryButton" id="btnLimpiarUsuarios">Limpiar</button>
+</form>
+
+<!-- TABLA DE USUARIOS -->
+{% if users %}
 <div class="table-container">
     <table>
         <thead>
@@ -30,44 +54,39 @@ extra_css %}
         <tbody>
             {% for user in users %}
             <tr>
-                <th>{{user.id_usuario}}</th>
-                <td>{{user.nombre}}</td>
-                <td>{{user.apellido}}</td>
-                <td>{{user.dni}}</td>
-                <td>{{user.telefono}}</td>
-                <td>{{user.direccion}}</td>
-                <td>{{user.nro_direccion}}</td>
+                <td>{{ user.id_usuario }}</td>
+                <td>{{ user.nombre }}</td>
+                <td>{{ user.apellido }}</td>
+                <td>{{ user.dni }}</td>
+                <td>{{ user.telefono }}</td>
+                <td>{{ user.direccion }}</td>
+                <td>{{ user.nro_direccion }}</td>
                 <td>
-                    {% if user.libros %} {% for libro in user.libros %}
-                    <p>
-                        {{libro.titulo}} - <br />
-                        <span style="font-weight: 600">{{libro.autor}}</span>
-                    </p>
-                    {% endfor %} {% else %}
-                    <p>-</p>
+                    {% if user.libros %}
+                        {% for libro in user.libros %}
+                            <p>{{ libro.titulo }} - <span style="font-weight: 600">{{ libro.autor }}</span></p>
+                        {% endfor %}
+                    {% else %}
+                        <p>-</p>
                     {% endif %}
                 </td>
                 <td>
                     <div class="container-buttons">
-                        <form
-                            method="get"
-                            action="{{ url_for('editar_usuario', id_usuario=user.id_usuario) }}"
-                        >
-                            <button>Editar</button>
+                        <form method="get" action="{{ url_for('editar_usuario', id_usuario=user.id_usuario) }}">
+                            <button class="editar">Editar</button>
                         </form>
-                        <form
-                            method="post"
-                            action="{{ url_for('eliminar_usuario', id_usuario=user.id_usuario) }}"
-                            onsubmit="return mostrarAlerta(event, this)"
-                        >
-                            <button>Eliminar</button>
+                        <form method="post" action="{{ url_for('eliminar_usuario', id_usuario=user.id_usuario) }}" onsubmit="return mostrarAlerta(event, this)">
+                            <button class="eliminar">Eliminar</button>
                         </form>
-                        <form
-                            method="get"
-                            action="{{ url_for('seleccionar_libro_prestamo', id_usuario=user.id_usuario) }}"
-                        >
-                            <button>Prestar Libro</button>
+                        <form method="get" action="{{ url_for('seleccionar_libro_prestamo', id_usuario=user.id_usuario) }}">
+                            <button class="prestar">Prestar Libro</button>
                         </form>
+
+                        {% if user.libros and user.libros|length > 0 %}
+                            <form method="get" action="{{ url_for('devolver_libro', id_usuario=user.id_usuario) }}">
+                                <button class="devolver">Devolver Libro</button>
+                            </form>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -76,164 +95,162 @@ extra_css %}
     </table>
 </div>
 {% else %}
-<p>No hay usuarios registrados</p>
+<p>No hay usuarios registrados.</p>
 {% endif %}
 
 <hr />
 
+<!-- FORMULARIO DE NUEVO USUARIO -->
 <form action="/usuarios" method="post" class="form-usuario" id="form-usuario">
     <div>
         <label for="nombre">Nombres:</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Juan" />
+        <input type="text" id="nombre" name="nombre" placeholder="Juan" required />
         <p id="error-nombre" class="error"></p>
     </div>
 
     <div>
         <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" placeholder="Pérez" />
+        <input type="text" id="apellido" name="apellido" placeholder="Pérez" required />
         <p id="error-apellido" class="error"></p>
     </div>
 
     <div>
         <label for="dni">DNI:</label>
-        <input type="number" id="dni" name="dni" placeholder="1234567" />
+        <input type="number" id="dni" name="dni" placeholder="1234567" required />
         <p id="error-dni" class="error"></p>
     </div>
 
     <div>
         <label for="telefono">Teléfono:</label>
-        <input
-            type="text"
-            id="telefono"
-            name="telefono"
-            placeholder="2284-123456"
-        />
+        <input type="text" id="telefono" name="telefono" placeholder="2284-123456" />
         <p id="error-telefono" class="error"></p>
     </div>
 
     <div>
         <label for="direccion">Dirección:</label>
-        <input
-            type="text"
-            id="direccion"
-            name="direccion"
-            placeholder="hornos"
-        />
+        <input type="text" id="direccion" name="direccion" placeholder="Hornos" />
         <p id="error-direccion" class="error"></p>
     </div>
 
     <div>
         <label for="nro_direccion">N° Dirección:</label>
-        <input
-            type="number"
-            id="nro_direccion"
-            name="nro_direccion"
-            placeholder="2025"
-        />
-
+        <input type="number" id="nro_direccion" name="nro_direccion" placeholder="2025" />
         <p id="error-nro_direccion" class="error"></p>
     </div>
 
     <button type="submit">Agregar</button>
 </form>
-<!-- Validacion de formulario -->
+
+<!-- FILTRADO EN VIVO -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const regex = {
-            nombre: /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,}$/,
-            apellido: /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{3,}$/,
-            dni: /^\d{7,8}$/,
-            telefono: /^\d{4}-\d{6}$/,
-            direccion: /^.{2,}$/,
-            nro_direccion: /^\d+$/,
-        };
+document.addEventListener("DOMContentLoaded", () => {
+    const inputBusqueda = document.querySelector('#buscarUsuario');
+    const campoSelect = document.querySelector('#campoUsuario');
+    const ordenSelect = document.querySelector('#ordenUsuario');
+    const tbody = document.querySelector('tbody');
+    const btnLimpiar = document.querySelector('#btnLimpiarUsuarios');
+    let timer;
 
-        const mensajes = {
-            nombre: "El nombre debe tener al menos 3 letras y solo contener letras.",
-            apellido:
-                "El apellido debe tener al menos 3 letras y solo contener letras.",
-            dni: "El DNI debe tener 7 u 8 dígitos numéricos.",
-            telefono: "El teléfono debe tener el formato XXXX-XXXXXX.",
-            direccion: "La dirección debe tener al menos 2 caracteres.",
-            nro_direccion: "El número de dirección debe contener solo números.",
-        };
+    if (inputBusqueda && tbody) {
+        inputBusqueda.addEventListener("input", () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const q = inputBusqueda.value.trim();
+                const campo = campoSelect.value;
+                const orden = ordenSelect.value;
 
-        const form = document.getElementById("form-usuario");
-        const inputs = document.querySelectorAll(".form-usuario input");
+                fetch(`/buscar_usuarios?q=${encodeURIComponent(q)}&campo=${campo}&orden=${orden}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        tbody.innerHTML = "";
 
-        // Validación en vivo
-        inputs.forEach((input) => {
-            input.addEventListener("input", () => validarCampo(input));
+                        if (data.length === 0) {
+                            tbody.innerHTML = `<tr><td colspan="9">No hay resultados.</td></tr>`;
+                            return;
+                        }
+
+                        data.forEach(user => {
+                            const librosHTML = user.libros && user.libros.length > 0
+                                ? user.libros.map(l => `<p>${l.titulo} - <strong>${l.autor}</strong></p>`).join("")
+                                : "<p>-</p>";
+
+                            const devolverBtn = user.libros && user.libros.length > 0
+                                ? `<form method="get" action="/devolver_libro/${user.id_usuario}">
+                                       <button class="devolver">Devolver Libro</button>
+                                   </form>`
+                                : "";
+
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `
+                                <td>${user.id_usuario}</td>
+                                <td>${user.nombre}</td>
+                                <td>${user.apellido}</td>
+                                <td>${user.dni}</td>
+                                <td>${user.telefono}</td>
+                                <td>${user.direccion}</td>
+                                <td>${user.nro_direccion}</td>
+                                <td>${librosHTML}</td>
+                                <td>
+                                    <div class="container-buttons">
+                                        <form method="get" action="/editar_usuario/${user.id_usuario}">
+                                            <button class="editar">Editar</button>
+                                        </form>
+                                        <form method="post" action="/eliminar_usuario/${user.id_usuario}" onsubmit="return mostrarAlerta(event,this)">
+                                            <button class="eliminar">Eliminar</button>
+                                        </form>
+                                        <form method="get" action="/seleccionar_libro_prestamo/${user.id_usuario}">
+                                            <button class="prestar">Prestar Libro</button>
+                                        </form>
+                                        ${devolverBtn}
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    })
+                    .catch(err => console.error("Error al buscar usuarios:", err));
+            }, 300);
         });
+    }
 
-        // Función que valida cada campo
-        function validarCampo(input) {
-            const valor = input.value.trim();
-            const error = input.parentElement.querySelector(".error");
-
-            if (valor === "") {
-                error.textContent = "Este campo es obligatorio.";
-                input.classList.add("input-error");
-                return false;
-            } else if (!regex[input.name].test(valor)) {
-                error.textContent = mensajes[input.name];
-                input.classList.add("input-error");
-                return false;
-            } else {
-                error.textContent = "";
-                input.classList.remove("input-error");
-                return true;
-            }
-        }
-
-        // Bloquear envío si hay errores
-        form.addEventListener("submit", (e) => {
-            let valido = true;
-
-            inputs.forEach((input) => {
-                const ok = validarCampo(input);
-                if (!ok) valido = false;
-            });
-
-            if (!valido) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: "error",
-                    title: "Formulario incompleto",
-                    text: "Por favor, corrige los errores antes de continuar.",
-                    confirmButtonColor: "var(--color-primario-oscuro)",
-                });
-            }
+    [campoSelect, ordenSelect].forEach(select => {
+        select.addEventListener("change", () => {
+            inputBusqueda.dispatchEvent(new Event("input"));
         });
     });
+
+    btnLimpiar.addEventListener("click", () => {
+        inputBusqueda.value = "";
+        campoSelect.selectedIndex = 0;
+        ordenSelect.selectedIndex = 0;
+        inputBusqueda.dispatchEvent(new Event("input"));
+    });
+});
 </script>
-<!-- Sweet alert para confirmación de eliminación de usuario -->
+
+<!-- SWEET ALERT PARA ELIMINACIÓN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function mostrarAlerta(e, form) {
-        e.preventDefault(); // evita que el formulario se envíe automáticamente
-
-        Swal.fire({
-            title: "¿Desea eliminar al usuario?",
-            text: "Esta acción no se puede deshacer.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "var(--rojo-error)",
-            cancelButtonColor: "var(--color-primario-oscuro)",
-            confirmButtonText: "Sí, eliminar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit(); // envía el formulario solo si confirma
-            }
-        });
-
-        return false; // evita que el form se envíe de inmediato
-    }
+function mostrarAlerta(e, form) {
+    e.preventDefault();
+    Swal.fire({
+        title: "¿Desea eliminar al usuario?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "var(--rojo-error)",
+        cancelButtonColor: "var(--color-primario-oscuro)",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) form.submit();
+    });
+    return false;
+}
 </script>
 <!-- Script para guardar la posicion del scroll donde estaba el usuario y no se recargue la pagina y redireccione hacia arriba del todo -->
 <script>
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener("beforeunload", (e) => {
         localStorage.setItem("scrollPosition", window.scrollY);
     });
 
@@ -245,5 +262,4 @@ extra_css %}
         }
     });
 </script>
-
 {% endblock %}

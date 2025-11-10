@@ -1,46 +1,37 @@
 {% extends "base.html" %} {% block title %}Inicio{% endblock %} {% block content
 %}
 <section class="dashboard">
-	<h2>Resumen general</h2>
-	<p>
-		Bienvenido al sistema de gestión de biblioteca. Desde aquí podés
-		administrar los libros y los préstamos.
-	</p>
-	<div class="container-resumen">
-		<a href="{{url_for('libros')}}">
-			<div class="card-resumen">
-				<p>
-					<strong>Libros Totales:</strong>
-					{{biblioteca.total_libros()}}
-				</p>
-			</div>
-		</a>
+    <h2>Resumen general</h2>
+    <p>
+        Bienvenido al sistema de gestión de biblioteca. Desde aquí podés
+        administrar los libros y los préstamos.
+    </p>
+    <div class="container-resumen">
+        <a href="{{url_for('libros')}}">
+            <div class="card-resumen">
+                <p>
+                    <strong>Libros Totales:</strong>
+                    {{biblioteca.total_libros()}}
+                </p>
+            </div>
+        </a>
 
-		<a href="{{url_for('prestamos')}}">
-			<div class="card-resumen">
-				<p>
-					<strong>Prestados:</strong>
-					{{ biblioteca.prestados()}}
-				</p>
-			</div>
-		</a>
-
-		<a href="{{url_for('libros')}}">
-			<div class="card-resumen">
-				<p>
-					<strong>Disponibles:</strong>
-					{{biblioteca.disponibles()}}
-				</p>
-			</div>
-		</a>
-		<a href="{{url_for('usuarios')}}">
-			<div class="card-resumen">
-				<p>
-					<strong>Usuarios:</strong>
-					{{biblioteca.total_usuarios()}}
-				</p>
-			</div>
-		</a>
-	</div>
+        <a href="{{url_for('libros')}}">
+            <div class="card-resumen">
+                <p>
+                    <strong>Disponibles:</strong>
+                    {{biblioteca.disponibles()}}
+                </p>
+            </div>
+        </a>
+        <a href="{{url_for('usuarios')}}">
+            <div class="card-resumen">
+                <p>
+                    <strong>Usuarios:</strong>
+                    {{biblioteca.total_usuarios()}}
+                </p>
+            </div>
+        </a>
+    </div>
 </section>
 {% endblock %}

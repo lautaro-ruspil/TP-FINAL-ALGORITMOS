@@ -1,0 +1,97 @@
+{% extends "base.html" %} {% block title %}Devolver libro{% endblock %} {% block
+extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/libros_disponibles.css') }}"
+/>
+{% endblock %} {% block content %}
+<h2>Devolver libro - {{ usuario.nombre }} {{ usuario.apellido }}</h2>
+
+<div class="table-container">
+    {% if usuario.libros %}
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for libro in usuario.libros %}
+            <tr>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.autor }}</td>
+                <td class="container-action">
+                    <form
+                        method="post"
+                        action="{{ url_for('confirmar_devolucion', id_usuario=usuario.id_usuario, id_libro=libro.id_libro) }}"
+                    >
+                        <button type="submit" class="devolver">Devolver</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-libros">El usuario no tiene libros para devolver.</p>
+    {% endif %}
+</div>
+
+<div class="container-volver">
+    <a href="{{ url_for('usuarios') }}" class="btn-volver">Volver</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll(".devolver").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const form = event.target.closest("form");
+
+            const confirm = await Swal.fire({
+                title: "¿Confirmar devolución?",
+                text: "¿Deseas devolver este libro?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "var(--color-primario-oscuro)",
+                cancelButtonColor: "var(--rojo-error)",
+                confirmButtonText: "Sí, devolver",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            Swal.fire({
+                title: "Procesando...",
+                text: "Registrando la devolución, por favor espera.",
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            const response = await fetch(form.action, { method: "POST" });
+            const data = await response.json();
+            Swal.close();
+
+            if (data.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Devolución exitosa",
+                    text: data.msg,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    willClose: () => window.location.reload(),
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "No se pudo devolver el libro",
+                    text: data.msg,
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -18,11 +18,13 @@ class Biblioteca:
     def total_libros(self):
         return len(self.libros)
 
-    def prestados(self):
-        return len([l for l in self.libros if l.prestado])
-
     def disponibles(self):
-        return len([l for l in self.libros if not l.prestado])
+        # suma de stocks de los libros que no están prestados
+        return sum(l.stock for l in self.libros if not l.prestados)
+
+    def prestados(self):
+        # cuenta de libros prestados
+        return sum(1 for l in self.libros if l.prestados)
 
     def eliminar(self, titulo):
         for libro in self.libros:
