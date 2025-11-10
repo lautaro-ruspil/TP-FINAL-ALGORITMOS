@@ -1,3 +1,12 @@
+/* -------- TÍTULO -------- */
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--color-primario-oscuro);
+    text-align: center;
+}
+
 /* -------- CONTENEDOR PRINCIPAL -------- */
 main {
     background-color: var(--card);
@@ -9,21 +18,16 @@ main {
     margin: 2rem auto;
 }
 
-/* -------- TÍTULO -------- */
-h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--azul);
-    text-align: center;
-    margin-bottom: 2rem;
-}
+/* ===========================
+   FORMULARIO DE EDICIÓN
+=========================== */
 
-/* -------- FORMULARIO DE EDICIÓN -------- */
 .form-editar {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem 2.5rem;
-    padding: 2rem;
+    padding: 3rem;
+    border-radius: 12px;
 }
 
 .form-editar div {
@@ -32,35 +36,70 @@ h2 {
     gap: 0.6rem;
 }
 
-/* -------- CAMPOS -------- */
+/* Etiquetas */
 .form-editar label {
     font-weight: 600;
     color: var(--azul);
+    margin-bottom: 0.3rem;
     font-size: 0.95rem;
 }
 
+/* Campos de entrada */
 .form-editar input {
     padding: 0.9rem 1rem;
-    border: 1px solid var(--borde);
+    border: 1px solid var(--color-borde);
     border-radius: 8px;
     font-size: 1rem;
     background-color: #fff;
-    transition: all 0.2s;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 0.8rem;
 }
 
-.form-editar input:focus {
-    outline: none;
+/* Efecto focus (si no hay error) */
+.form-editar input:focus:not(.input-error) {
     border-color: var(--color-primario);
     box-shadow: 0 0 6px rgba(72, 159, 181, 0.4);
+    outline: none;
 }
 
-/* -------- CAMPO NO EDITABLE -------- */
+/* -------- CAMPOS NO EDITABLES -------- */
 .no-editable {
     font-size: 0.85rem;
     color: gray;
 }
 
-/* -------- BOTONES -------- */
+/* -------- ESTILO DE ERROR -------- */
+input.input-error {
+    border-color: var(--rojo-error) !important;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
+    outline: none !important;
+}
+
+input.input-error:focus {
+    border-color: var(--rojo-error) !important;
+    box-shadow: 0 0 6px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Quitar flechas de inputs tipo number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* -------- MENSAJES DE ERROR -------- */
+.error {
+    color: var(--rojo-error);
+    font-size: 0.85rem;
+    margin-top: -0.4rem;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+}
+
+/* ===========================
+   BOTONES
+=========================== */
+
 .botones {
     grid-column: 1 / -1;
     display: flex;
@@ -87,6 +126,7 @@ h2 {
     transform: translateY(-1px);
 }
 
+/* Botón cancelar */
 .btn-cancelar {
     background-color: #ccc;
     color: #333;
@@ -101,18 +141,4 @@ h2 {
 .btn-cancelar:hover {
     background-color: var(--rojo-error);
     color: #fff;
-}
-
-/* -------- RESPONSIVE -------- */
-@media (max-width: 700px) {
-    .botones {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .botones button,
-    .btn-cancelar {
-        width: 100%;
-        text-align: center;
-    }
 }

@@ -5,14 +5,12 @@ extra_css %}
     href="{{ url_for('static', filename='css/editar_usuario.css') }}"
 />
 {% endblock %} {% block content %}
-
 <h2>Editar Usuario</h2>
 
 <form
     action="{{ url_for('actualizar_usuario', id_usuario=usuario.id_usuario) }}"
     method="post"
     class="form-editar"
-    onsubmit="return mostrarAlerta(event, this)"
     id="form-editar"
 >
     <div>
@@ -59,6 +57,7 @@ extra_css %}
             name="telefono"
             value="{{ usuario.telefono }}"
         />
+        <p class="error error-telefono"></p>
     </div>
 
     <div>
@@ -69,6 +68,7 @@ extra_css %}
             name="direccion"
             value="{{ usuario.direccion }}"
         />
+        <p class="error error-direccion"></p>
     </div>
 
     <div>
@@ -79,6 +79,7 @@ extra_css %}
             name="nro_direccion"
             value="{{ usuario.nro_direccion }}"
         />
+        <p class="error error-nro_direccion"></p>
     </div>
 
     <div class="botones">
@@ -89,15 +90,67 @@ extra_css %}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document
-        .querySelector("#form-editar")
-        .addEventListener("submit", async (event) => {
-            event.preventDefault();
-            console.log(event);
-            const form = event.target;
-            const formData = new FormData(form);
+    document.addEventListener("DOMContentLoaded", () => {
+        const regex = {
+            telefono: /^\d{4}-\d{6}$/,
+            direccion: /^.{2,}$/,
+            nro_direccion: /^\d+$/,
+        };
 
-            // Confirmación
+        const mensajes = {
+            telefono: "El teléfono debe tener el formato XXXX-XXXXXX.",
+            direccion: "La dirección debe tener al menos 2 caracteres.",
+            nro_direccion: "El número de dirección debe contener solo números.",
+        };
+
+        const form = document.getElementById("form-editar");
+        const inputs = form.querySelectorAll("input:not([readonly])");
+
+        // Validación en vivo
+        inputs.forEach((input) => {
+            input.addEventListener("input", () => validarCampo(input));
+        });
+
+        // Función de validación individual
+        function validarCampo(input) {
+            const valor = input.value.trim();
+            const error = document.querySelector(`.error-${input.name}`);
+
+            if (valor === "") {
+                error.textContent = "Este campo es obligatorio.";
+                input.classList.add("input-error");
+                return false;
+            } else if (!regex[input.name].test(valor)) {
+                error.textContent = mensajes[input.name];
+                input.classList.add("input-error");
+                return false;
+            } else {
+                error.textContent = "";
+                input.classList.remove("input-error");
+                return true;
+            }
+        }
+
+        // Validación general al enviar
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            let valido = true;
+
+            inputs.forEach((input) => {
+                if (!validarCampo(input)) valido = false;
+            });
+
+            if (!valido) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Formulario incompleto",
+                    text: "Por favor, corrige los errores antes de guardar.",
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+                return;
+            }
+
+            // Confirmación antes de enviar
             const result = await Swal.fire({
                 title: "¿Guardar cambios?",
                 text: "Se actualizarán los datos del usuario.",
@@ -111,7 +164,8 @@ extra_css %}
 
             if (!result.isConfirmed) return;
 
-            // Enviar datos vía fetch (sin recargar)
+            // Enviar los datos con fetch
+            const formData = new FormData(form);
             const response = await fetch(form.action, {
                 method: "POST",
                 body: formData,
@@ -125,7 +179,6 @@ extra_css %}
                     timer: 2000,
                     showConfirmButton: false,
                     willClose: () => {
-                        // Redirigir cuando se cierre el alert
                         window.location.href = "{{ url_for('usuarios') }}";
                     },
                 });
@@ -137,5 +190,6 @@ extra_css %}
                 });
             }
         });
+    });
 </script>
 {% endblock %}

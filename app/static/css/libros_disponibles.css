@@ -1,36 +1,18 @@
-/* ===========================
-    LIBROS DISPONIBLES - ESTILO PROFESIONAL
-=========================== */
-
-/* Importar variables si están en otro archivo, si no, mantener la definición */
-:root {
-    --azul: #3a5a91;
-    --azul-hover: #2e4a7a;
-    --fondo-claro: #f8f9fb;
-    --card: #ffffff;
-    --borde: #e0e6ed;
-    --gris-texto: #495057;
-    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --verde-prestar: #27ae60;
-    --verde-prestar-hover: #219d53;
-}
-
 /* -------- CONTENEDOR PRINCIPAL -------- */
 main {
-    background-color: var(--card);
-    box-shadow: var(--sombra-suave);
-    border-radius: 16px;
-    padding: 3rem 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 2.5rem;
     width: 95%;
-    max-width: 1000px; /* Tamaño ideal para esta tabla */
+    max-width: 1100px;
     margin: 2rem auto;
 }
 
-/* -------- TÍTULO Y USUARIO TARGET -------- */
+/* -------- TÍTULO Y SUBTÍTULO -------- */
 h2 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--azul);
+    color: var(--color-primario-oscuro);
     text-align: center;
     margin-bottom: 0.5rem;
 }
@@ -38,102 +20,119 @@ h2 {
 .usuario-target {
     text-align: center;
     font-size: 1.1rem;
-    color: var(--gris-texto);
+    color: #333;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--borde);
+    border-bottom: 1px solid #c3c3c3;
 }
 
+/* -------- SIN LIBROS -------- */
 .no-libros {
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--gris-texto);
     padding: 2rem;
-    background-color: var(--fondo-claro);
-    border-radius: 8px;
+    background-color: var(--color-gris-suave);
+    border-radius: 10px;
+    margin-top: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* ===========================
-    TABLA DE LIBROS
+   TABLA DE LIBROS
 =========================== */
 .table-container {
     overflow-x: auto;
     width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
 }
 
 table {
     width: 100%;
-    border-spacing: 0;
     border-collapse: collapse;
     font-size: 0.95rem;
     min-width: 700px;
 }
 
-table th,
-table td {
+th,
+td {
     padding: 1rem 0.8rem;
     text-align: left;
-    border-bottom: 1px solid var(--borde);
-    vertical-align: middle;
+    border-bottom: 1px solid var(--color-borde);
 }
 
-table th {
-    background-color: var(--fondo-claro);
-    color: var(--azul);
+th {
+    background-color: var(--color-primario-claro);
+    color: #fff;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.8rem;
     letter-spacing: 0.5px;
 }
 
-table td {
+td {
     color: var(--gris-texto);
+    background-color: #fff;
+    vertical-align: middle;
 }
 
-table tbody tr:hover {
-    background-color: #f6f8fc;
+tr:nth-child(even) td {
+    background-color: var(--color-gris-suave);
+}
+
+tr:hover td {
+    background-color: #eef3f8;
     transition: background 0.2s ease;
 }
 
-/* Ajustes específicos para las columnas */
-table th:nth-child(4),
-table td:nth-child(4) {
-    /* ISBN */
-    white-space: nowrap;
-    width: 1%;
-}
-table th:nth-child(5),
-table td:nth-child(5) {
-    /* Acción */
-    width: 1%;
-    text-align: center;
-}
+/* ===========================
+   BOTONES
+=========================== */
 
-/* -------- BOTÓN DE ACCIÓN (Prestar) -------- */
+/* -------- BOTÓN PRESTAR -------- */
 .container-action {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
 }
 
 .btn-prestar {
-    background-color: var(--verde-prestar);
+    background-color: var(--color-acento);
     color: #fff;
     padding: 0.6rem 1rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.9rem;
-    transition: all 0.2s ease;
+    transition: background 0.2s, transform 0.1s;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-prestar:hover {
-    background-color: var(--verde-prestar-hover);
+    background-color: var(--color-primario);
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* -------- BOTÓN YA PRESTADO -------- */
+.btn-prestado {
+    background-color: #cfd3d7;
+    color: #555;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: not-allowed;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+.btn-prestado:hover {
+    background-color: #cfd3d7;
+    transform: none;
 }
 
 /* -------- BOTÓN VOLVER -------- */
@@ -143,30 +142,18 @@ table td:nth-child(5) {
 }
 
 .btn-volver {
-    background-color: #ccc;
-    color: #333;
+    background-color: #e74c3c;
+    color: #fff;
     padding: 1rem 2rem;
     border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
     text-align: center;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
 .btn-volver:hover {
-    background-color: var(--rojo-error);
-    color: #fff;
-}
-
-/* ===========================
-    RESPONSIVIDAD 
-=========================== */
-@media (max-width: 600px) {
-    main {
-        padding: 1.5rem 1rem;
-    }
-
-    h2 {
-        font-size: 1.8rem;
-    }
+    background-color: #c0392b;
+    transform: translateY(-1px);
 }

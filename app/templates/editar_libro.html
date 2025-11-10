@@ -1,51 +1,119 @@
 {% extends "base.html" %} {% block title %}Editar Libro{% endblock %} {% block
 content %}
 <link rel="stylesheet" href="../static/css/libros.css" />
+
 <h2>Editar Libro</h2>
-<form method="POST">
-    <label for="titulo">Título:</label>
-    <input
-        id="input-titulo"
-        type="text"
-        name="titulo"
-        placeholder="Título"
-        value="{{ form.titulo if form else libro.titulo }}"
-    />
-    {% if errores and errores.get('titulo') %}
-    <p class="error" data-field="titulo">{{ errores['titulo'] }}</p>
-    {% endif %}
-    <br />
 
-    <label for="autor">Autor:</label>
-    <input
-        id="input-autor"
-        type="text"
-        name="autor"
-        placeholder="Autor"
-        value="{{ form.autor if form else libro.autor }}"
-    />
-    {% if errores and errores.get('autor') %}
-    <p class="error" data-field="autor">{{ errores['autor'] }}</p>
-    {% endif %}
-    <br />
+<form id="formEditar" method="POST" class="form-editar-libro">
+    <div class="campo">
+        <label for="input-titulo">Título:</label>
+        <input
+            id="input-titulo"
+            type="text"
+            name="titulo"
+            placeholder="Título"
+            value="{{ libro.titulo }}"
+        />
+        <span class="error" data-field="titulo"></span>
+    </div>
 
-    <label for="genero">Género:</label>
-    <input
-        id="input-genero"
-        type="text"
-        name="genero"
-        placeholder="Género"
-        value="{{ form.genero if form else libro.genero }}"
-    />
-    {% if errores and errores.get('genero') %}
-    <p class="error" data-field="genero">{{ errores['genero'] }}</p>
-    {% endif %}
-    <br />
+    <div class="campo">
+        <label for="input-autor">Autor:</label>
+        <input
+            id="input-autor"
+            type="text"
+            name="autor"
+            placeholder="Autor"
+            value="{{ libro.autor }}"
+        />
+        <span class="error" data-field="autor"></span>
+    </div>
 
-    <button type="submit">Guardar cambios</button>
-    <a href="{{ url_for('libros') }}"
-        ><button type="button">Cancelar</button></a
-    >
+    <div class="campo">
+        <label for="input-genero">Género:</label>
+        <input
+            id="input-genero"
+            type="text"
+            name="genero"
+            placeholder="Género"
+            value="{{ libro.genero }}"
+        />
+        <span class="error" data-field="genero"></span>
+    </div>
+
+    <button type="submit" class="btn-primario">Guardar cambios</button>
+    <a href="{{ url_for('libros') }}">
+        <button type="button" class="angryButton">Cancelar</button>
+    </a>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // === Expresiones regulares ===
+        const regex = {
+            titulo: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,:-]{2,}$/,
+            autor: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/,
+            genero: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/,
+        };
+
+        // === Mensajes de error personalizados ===
+        const mensajes = {
+            titulo: "El título debe tener al menos 2 caracteres y no contener símbolos especiales.",
+            autor: "El autor debe tener al menos 3 letras y solo contener letras y espacios.",
+            genero: "El género debe tener al menos 3 letras y solo contener letras y espacios.",
+        };
+
+        const form = document.getElementById("formEditar");
+        const inputs = form.querySelectorAll("input");
+
+        // === Validación en vivo ===
+        inputs.forEach((input) => {
+            input.addEventListener("input", () => validarCampo(input));
+        });
+
+        function validarCampo(input) {
+            const valor = input.value.trim();
+            const error = input.parentElement.querySelector(".error");
+
+            if (valor === "") {
+                error.textContent = "Este campo es obligatorio.";
+                error.classList.add("visible");
+                input.classList.add("error-border");
+                return false;
+            } else if (!regex[input.name].test(valor)) {
+                error.textContent = mensajes[input.name];
+                error.classList.add("visible");
+                input.classList.add("error-border");
+                return false;
+            } else {
+                error.textContent = "";
+                error.classList.remove("visible");
+                input.classList.remove("error-border");
+                return true;
+            }
+        }
+
+        // === Bloquear envío si hay errores ===
+        form.addEventListener("submit", (e) => {
+            let valido = true;
+
+            inputs.forEach((input) => {
+                const ok = validarCampo(input);
+                if (!ok) valido = false;
+            });
+
+            if (!valido) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: "error",
+                    title: "Formulario incompleto",
+                    text: "Por favor, corrige los errores antes de guardar.",
+                    confirmButtonColor: "var(--color-primario-oscuro)",
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}
