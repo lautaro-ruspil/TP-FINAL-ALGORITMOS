@@ -272,7 +272,6 @@ tr:nth-child(even) {
     font-weight: 500;
     color: var(--rojo-error);
     line-height: 1rem;
-    display: none;
 }
 .form-editar-libro .error.visible,
 .form-agregar-libro .error.visible {

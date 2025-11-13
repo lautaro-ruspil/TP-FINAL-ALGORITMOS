@@ -49,12 +49,14 @@ def libros():
         titulo = request.form["titulo"]
         autor = request.form["autor"]
         genero = request.form["genero"]
+        stock = int(request.form["stock"])
 
         nuevo_libro = Libro(
             len(biblioteca.libros) + 1,
             titulo,
             autor,
-            genero
+            genero,
+            stock
         )
         biblioteca.agregar_libro(nuevo_libro)
         return redirect(url_for("libros"))
