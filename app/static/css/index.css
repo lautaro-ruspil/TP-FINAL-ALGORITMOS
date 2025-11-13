@@ -116,29 +116,39 @@ nav a.activo {
 
 .dashboard h2 {
     color: var(--color-primario-oscuro);
+    font-size: 1.8 rem;
+    margin-bottom: 10px;
 }
 
 .dashboard p {
     color: var(--color-primario);
+    max-width: 300px;
+    margin-top: 30px;
 }
 
-.dashboard .container-resumen {
+.container-resumen{
+    margin-top: 30px;
     display: flex;
-    justify-content: center;
-    gap: 30px;
     flex-wrap: wrap;
-    align-items: center;
+    gap: 15px;
 }
 
 .container-resumen a {
     text-decoration: none;
 }
 
+.card-resumen p {
+    margin: 0;
+    line-height: 1.2;
+    font-weight: 500;
+    color: #fff;
+}
+
 .card-resumen {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-primario-claro);
+    background-color: var(--color-primario);
     color: #fff;
     border-radius: 8px;
     padding: 8px 10px;
@@ -154,6 +164,33 @@ nav a.activo {
     background-color: var(--color-acento);
     color: #fff;
     transform: translateY(-6px);
+}
+
+.dashboard-imagen {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap; 
+    gap: 50px;
+    padding: 40px;
+}
+
+.dashboard-texto {
+    flex: 1;
+    max-width: 450px; /* controla el ancho del texto + botones */
+}
+
+.imagen-biblioteca {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.imagen-biblioteca img {
+    width: 500px;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* ===========================
