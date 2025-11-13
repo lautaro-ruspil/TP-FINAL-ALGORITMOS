@@ -104,19 +104,19 @@
 <form action="/usuarios" method="post" class="form-usuario" id="form-usuario">
     <div>
         <label for="nombre">Nombres:</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Juan" required />
+        <input type="text" id="nombre" name="nombre" placeholder="Juan"  />
         <p id="error-nombre" class="error"></p>
     </div>
 
     <div>
         <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido" placeholder="Pérez" required />
+        <input type="text" id="apellido" name="apellido" placeholder="Pérez"  />
         <p id="error-apellido" class="error"></p>
     </div>
 
     <div>
         <label for="dni">DNI:</label>
-        <input type="number" id="dni" name="dni" placeholder="1234567" required />
+        <input type="number" id="dni" name="dni" placeholder="1234567"  />
         <p id="error-dni" class="error"></p>
     </div>
 
@@ -140,6 +140,88 @@
 
     <button type="submit">Agregar</button>
 </form>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // === Expresiones regulares ===
+    const regex = {
+        nombre: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/,                  // solo letras y espacios, min 2 caracteres
+        apellido: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/,                // solo letras y espacios, min 2 caracteres
+        dni: /^[0-9]{7,8}$/,                                     // 7 u 8 dígitos
+        telefono: /^[0-9\-]{11}$/,                               // permite - y 11 dígitos contado el guión
+        direccion: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,-]{3,}$/,          // letras, números, espacios y símbolos básicos
+        nro_direccion: /^[0-9]{1,5}$/                            // número entre 1 y 5 dígitos
+    };
+
+    // === Mensajes de error personalizados ===
+    const mensajes = {
+        nombre: "El nombre debe tener al menos 2 letras y solo puede contener letras y espacios.",
+        apellido: "El apellido debe tener al menos 2 letras y solo puede contener letras y espacios.",
+        dni: "El DNI debe tener entre 7 y 8 dígitos numéricos.",
+        telefono: "El teléfono solo puede contener digitos y debe estar en formato xxxx-xxxxxx",
+        direccion: "La dirección debe tener al menos 3 caracteres válidos.",
+        nro_direccion: "El número de dirección debe ser un número de hasta 5 dígitos."
+    };
+
+    // === Elementos del formulario ===
+    const form = document.getElementById("form-usuario");
+    const inputs = form.querySelectorAll("input");
+
+    // === Validación en vivo ===
+    inputs.forEach(input => {
+        input.addEventListener("input", () => validarCampo(input));
+    });
+
+    function validarCampo(input) {
+        const valor = input.value.trim();
+        const error = input.parentElement.querySelector(".error");
+
+        // Si el campo está vacío
+        if (valor === "") {
+            error.textContent = "Este campo es obligatorio.";
+            error.classList.add("visible");
+            input.classList.add("error-border");
+            return false;
+        }
+
+        // Si no cumple con el patrón
+        else if (regex[input.name] && !regex[input.name].test(valor)) {
+            error.textContent = mensajes[input.name];
+            error.classList.add("visible");
+            input.classList.add("error-border");
+            return false;
+        }
+
+        // Si está todo bien
+        else {
+            error.textContent = "";
+            error.classList.remove("visible");
+            input.classList.remove("error-border");
+            return true;
+        }
+    }
+
+    // === Bloquear envío si hay errores ===
+    form.addEventListener("submit", e => {
+        let valido = true;
+
+        inputs.forEach(input => {
+            const ok = validarCampo(input);
+            if (!ok) valido = false;
+        });
+
+        if (!valido) {
+            e.preventDefault();
+            Swal.fire({
+                icon: "error",
+                title: "Formulario incompleto",
+                text: "Por favor, corrige los errores antes de continuar.",
+                confirmButtonColor: "var(--color-primario-oscuro)"
+            });
+        }
+    });
+});
+</script>
 
 <!-- FILTRADO EN VIVO -->
 <script>

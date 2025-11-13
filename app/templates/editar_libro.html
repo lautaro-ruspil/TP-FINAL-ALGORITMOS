@@ -53,7 +53,6 @@ content %}
                 id="input-stock"
                 type="number"
                 name="stock"
-                min="{{ libro.stock }}"
                 value="{{ libro.stock }}"
                 placeholder="Ej: 20"
             />
@@ -93,20 +92,6 @@ content %}
         const stockInput = document.getElementById("input-stock");
         const stockOriginal = parseInt(stockInput.value);
 
-        // === Evitar disminuir stock ===
-        stockInput.addEventListener("input", () => {
-            const nuevoValor = parseInt(stockInput.value);
-            if (nuevoValor < stockOriginal) {
-                stockInput.value = stockOriginal;
-                Swal.fire({
-                    icon: "warning",
-                    title: "No permitido",
-                    text: "El stock no puede ser menor al actual.",
-                    confirmButtonColor: "var(--color-primario-oscuro)",
-                });
-            }
-        });
-
         // === Validación de campos ===
         inputs.forEach((input) => {
             input.addEventListener("input", () => validarCampo(input));
@@ -118,17 +103,42 @@ content %}
 
             if (valor === "") {
                 error.textContent = "Este campo es obligatorio.";
-                error.classList.add("visible");
                 input.classList.add("error-border");
                 return false;
-            } else if (!regex[input.name].test(valor)) {
+            }
+
+            // Validación especial para stock
+            if (input.name === "stock") {
+                const nuevoValor = parseInt(valor);
+                if (isNaN(nuevoValor)) {
+                    error.textContent = "El stock debe ser un número válido.";
+                    input.classList.add("error-border");
+                    return false;
+                } else if (nuevoValor < 0) {
+                    error.textContent = "El stock no puede ser negativo.";
+                    input.classList.add("error-border");
+                    return false;
+                } else if (nuevoValor < stockOriginal) {
+                    error.textContent =
+                        "El stock no puede ser menor al actual (" +
+                        stockOriginal +
+                        ").";
+                    input.classList.add("error-border");
+                    return false;
+                } else {
+                    error.textContent = "";
+                    input.classList.remove("error-border");
+                    return true;
+                }
+            }
+
+            // Validación general
+            if (!regex[input.name].test(valor)) {
                 error.textContent = mensajes[input.name];
-                error.classList.add("visible");
                 input.classList.add("error-border");
                 return false;
             } else {
                 error.textContent = "";
-                error.classList.remove("visible");
                 input.classList.remove("error-border");
                 return true;
             }
@@ -138,7 +148,6 @@ content %}
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            // Validar todos los campos antes de enviar
             let valido = true;
             inputs.forEach((input) => {
                 const ok = validarCampo(input);
@@ -155,7 +164,6 @@ content %}
                 return;
             }
 
-            // Confirmación antes de enviar
             const result = await Swal.fire({
                 title: "¿Guardar cambios?",
                 text: "Se actualizarán los datos del libro.",
@@ -169,7 +177,6 @@ content %}
 
             if (!result.isConfirmed) return;
 
-            // Enviar con fetch
             const formData = new FormData(form);
             const response = await fetch(form.action, {
                 method: "POST",
