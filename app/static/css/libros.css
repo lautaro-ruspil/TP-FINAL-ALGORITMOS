@@ -1,4 +1,4 @@
-/* -------- TÍTULO -------- */
+/* Título */
 h2 {
     font-size: 2rem;
     font-weight: 700;
@@ -7,7 +7,7 @@ h2 {
     text-align: center;
 }
 
-/* -------- SEPARADOR -------- */
+/* Separador */
 hr {
     border: none;
     border-top: 1px solid var(--color-borde);
@@ -16,9 +16,8 @@ hr {
     max-width: 1100px;
 }
 
-/* -------- CONTENEDOR PRINCIPAL -------- */
+/* Contenedor Principal */
 main {
-    background-color: var(--color-fondo);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     padding: 2.5rem;
@@ -27,11 +26,8 @@ main {
     margin: 2rem auto;
 }
 
-/* ===========================
-   FORMULARIO FILTRADO
-=========================== */
-
-#filtrado {
+/* Formulario Filtrado */
+.filtrado {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -45,30 +41,35 @@ main {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-#filtrado label {
+/* Etiquetas del formulario */
+.filtrado label {
     font-weight: 600;
     color: var(--color-primario-oscuro);
 }
 
-#filtrado select,
-#filtrado input[type="text"] {
+/* Select e Input del formulario de filtrado */
+.filtrado select,
+.filtrado input[type="text"] {
     padding: 0.8rem 1rem;
     border: 1px solid var(--color-borde);
     border-radius: 8px;
+    width: 100%;
+    margin-bottom: 12px;
     font-size: 0.95rem;
     background-color: var(--color-card);
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-#filtrado select:focus,
-#filtrado input[type="text"]:focus {
+/* Estilos para cuando los campos están enfocados */
+.filtrado select:focus,
+.filtrado input[type="text"]:focus {
     border-color: var(--color-primario);
     box-shadow: 0 0 6px rgba(72, 159, 181, 0.3);
     outline: none;
 }
 
 /* Botones del filtrado */
-#filtrado button {
+.filtrado button {
     background-color: var(--color-acento);
     color: #fff;
     padding: 0.8rem 1.3rem;
@@ -80,22 +81,23 @@ main {
     transition: background 0.2s ease, transform 0.1s ease;
 }
 
-#filtrado button:hover {
+/* Efecto hover al botón Buscar */
+.filtrado button:hover {
     background-color: var(--color-primario);
     transform: translateY(-1px);
 }
 
-/* Botón limpiar */
-#filtrado .angryButton {
+/* Botón limpiar filtros */
+.filtrado .limpiar {
     background-color: #e74c3c;
 }
-#filtrado .angryButton:hover {
+
+/* Efecto hover al botón de limpiar filtros */
+.filtrado .limpiar:hover {
     background-color: #c0392b;
 }
 
-/* ===========================
-   TABLA DE LIBROS
-=========================== */
+/* Tabla Libros */
 
 .table-container {
     overflow-x: auto;
@@ -108,15 +110,19 @@ main {
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    background-color: var(--color-card);
+    border-radius: 6px;
     min-width: 900px;
     font-size: 0.95rem;
+    overflow: hidden;
 }
 
 th,
 td {
-    padding: 1rem;
+    border: 1px solid var(--color-borde);
+    padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid var(--color-borde);
 }
 
 th {
@@ -138,9 +144,16 @@ tr:nth-child(even) {
     background-color: var(--color-gris-suave);
 }
 
-/* ===========================
-   BOTONES DE ACCIÓN (tabla libros)
-=========================== */
+/* Estados */
+.prestado {
+    color: #c0392b;
+}
+
+.disponible {
+    color: #27ae60;
+}
+
+/* Botones de acción tabla libros */
 
 /* Contenedor de botones */
 .container-buttons {
@@ -168,42 +181,48 @@ tr:nth-child(even) {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover uniforme */
+/* efecto Hover uniforme para todos los botones */
 .container-buttons form button:hover {
     transform: translateY(-1px);
 }
 
-/* Colores por clase (no afecta tamaño) */
+/* colores botón editar */
 .container-buttons button.editar {
     background-color: var(--color-primario);
     color: #fff;
 }
+
+/* Efecto hover botón editar */
 .container-buttons button.editar:hover {
     background-color: var(--color-primario-oscuro);
 }
 
+/* colores botón eliminar */
 .container-buttons button.eliminar {
     background-color: #e74c3c;
     color: #fff;
 }
+
+/* Efecto hover botón eliminar */
 .container-buttons button.eliminar:hover {
     background-color: #c0392b;
 }
 
+/* Colores botón devolver */
 .container-buttons button.devolver {
     background-color: var(--color-acento);
     color: #fff;
 }
+
+/* Efecto hover botón devolver */
 .container-buttons button.devolver:hover {
     background-color: var(--color-primario);
 }
 
 /* Formulario de edición  y agregar libro */
-
-/* Contenedor general: mantener padding y estilo */
 .form-editar-libro,
 .form-agregar-libro {
-    display: block; /* no queremos flex-column aquí para forzar inputs en fila dentro de .campos-form */
+    display: block;
     max-width: 1100px;
     padding: 2.5rem;
     border: 2px solid var(--color-borde);
@@ -215,29 +234,29 @@ tr:nth-child(even) {
     box-sizing: border-box;
 }
 
-/* Contenedor que sí controla la fila de inputs */
+/* Contenedor que controla la fila de inputs */
 .campos-form {
     display: flex;
     gap: 1.5rem;
     align-items: flex-start;
     justify-content: space-between;
-    flex-wrap: nowrap; /* intenta mantener todo en una sola fila */
+    flex-wrap: nowrap;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Cada campo: tamaño fijo relativo para que entren 4 en una fila */
+/* Estilos campos formulario */
 .form-editar-libro .campo,
 .form-agregar-libro .campo {
     display: flex;
     flex-direction: column;
-    flex: 0 0 24%; /* cada campo ocupa ~24% -> 4 campos en 96% ancho total */
-    min-width: 180px; /* evita que el input quede demasiado pequeño */
+    flex: 0 0 24%;
+    min-width: 180px;
     box-sizing: border-box;
     position: relative;
 }
 
-/* Inputs (mantener estilos) */
+/* Inputs */
 .form-editar-libro input,
 .form-agregar-libro input {
     padding: 0.9rem 1rem;
@@ -245,10 +264,12 @@ tr:nth-child(even) {
     border-radius: 8px;
     background-color: var(--color-card);
     font-size: 1rem;
+    margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
 }
 
+/* Efecto inputs enfocados */
 .form-editar-libro input:focus,
 .form-agregar-libro input:focus {
     border-color: var(--color-primario);
@@ -262,7 +283,7 @@ tr:nth-child(even) {
     border-color: var(--rojo-error);
 }
 
-/* Mensajes de error (si los usás) */
+/* Mensajes de error */
 .form-editar-libro .error,
 .form-agregar-libro .error {
     position: absolute;
@@ -278,18 +299,18 @@ tr:nth-child(even) {
     display: block;
 }
 
-/* Contenedor de botones: siempre debajo de los inputs */
+/* Contenedor de botones */
 .acciones-form {
     width: 100%;
     margin-top: 2.2rem;
     display: flex;
-    justify-content: space-between; /* poner a la derecha. usar center para centrar */
+    justify-content: space-between;
     gap: 1rem;
     align-items: center;
     box-sizing: border-box;
 }
 
-/* Botones (mantener estilos previos) */
+/* Botones */
 .btn-primario {
     background-color: var(--color-acento);
     color: #fff;
@@ -318,7 +339,7 @@ tr:nth-child(even) {
     box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
 }
 
-.angryButton {
+.cancelar {
     background-color: #e74c3c;
     color: #fff;
     padding: 0.9rem 1.6rem;
@@ -334,7 +355,7 @@ tr:nth-child(even) {
 }
 
 /* Botón Cancelar */
-.form-editar-libro .angryButton {
+.form-editar-libro .cancelar {
     background-color: var(--rojo-error);
     color: #fff;
     padding: 0.9rem 1.8rem;
@@ -347,7 +368,7 @@ tr:nth-child(even) {
     transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.form-editar-libro .angryButton:hover {
+.form-editar-libro .cancelar:hover {
     background-color: #96281d;
     transform: translateY(-1px);
 }

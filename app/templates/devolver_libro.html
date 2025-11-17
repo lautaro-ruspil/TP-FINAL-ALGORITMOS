@@ -2,7 +2,7 @@
 extra_css %}
 <link
     rel="stylesheet"
-    href="{{ url_for('static', filename='css/libros_disponibles.css') }}"
+    href="{{ url_for('static', filename='css/devolver_libro.css') }}"
 />
 {% endblock %} {% block content %}
 <h2>Devolver libro - {{ usuario.nombre }} {{ usuario.apellido }}</h2>
@@ -22,12 +22,14 @@ extra_css %}
             <tr>
                 <td>{{ libro.titulo }}</td>
                 <td>{{ libro.autor }}</td>
-                <td class="container-action">
+                <td class="container-devolver">
                     <form
                         method="post"
                         action="{{ url_for('confirmar_devolucion', id_usuario=usuario.id_usuario, id_libro=libro.id_libro) }}"
                     >
-                        <button type="submit" class="devolver">Devolver</button>
+                        <button type="submit" class="btn-devolver">
+                            Devolver
+                        </button>
                     </form>
                 </td>
             </tr>
@@ -45,7 +47,7 @@ extra_css %}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.querySelectorAll(".devolver").forEach((button) => {
+    document.querySelectorAll(".btn-devolver").forEach((button) => {
         button.addEventListener("click", async (event) => {
             event.preventDefault();
             const form = event.target.closest("form");

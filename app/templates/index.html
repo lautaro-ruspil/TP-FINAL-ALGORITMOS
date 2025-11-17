@@ -1,47 +1,51 @@
 {% extends "base.html" %} {% block title %}Inicio{% endblock %} {% block content
 %}
 <section class="dashboard">
-    <div class="dashboard-imagen">
-    <div class="dashboard-texto">
-        <h2>Bienvenido al sistema de <br>
-            gestión de biblioteca</h2>
-        <p>
-            Organizá, consultá y gestioná todos <br>
-            recursos de tu biblioteca en un <br>
-            solo lugar.
-        </p>
-        <div class="container-resumen">
-            <a href="{{url_for('libros')}}">
-                <div class="card-resumen">
-                    <p>
-                        <strong>Libros Totales:</strong>
-                        {{biblioteca.total_libros()}}
-                    </p>
-                </div>
-            </a>
+    <div class="dashboard-container">
+        <div class="dashboard-texto">
+            <h2>
+                Bienvenido al sistema de <br />
+                gestión de biblioteca
+            </h2>
+            <p>
+                Organizá, consultá y gestioná todos <br />
+                recursos de tu biblioteca en un <br />
+                solo lugar.
+            </p>
+            <div class="container-resumen">
+                <a href="{{url_for('libros')}}">
+                    <div class="card-resumen">
+                        <p>
+                            <strong>Libros Totales:</strong>
+                            {{biblioteca.total_libros()}}
+                        </p>
+                    </div>
+                </a>
 
-            <a href="{{url_for('libros')}}">
-                <div class="card-resumen">
-                    <p>
-                        <strong>Disponibles:</strong>
-                        {{biblioteca.disponibles()}}
-                    </p>
-                </div>
-            </a>
-            <a href="{{url_for('usuarios')}}">
-                <div class="card-resumen">
-                    <p>
-                        <strong>Usuarios:</strong>
-                        {{biblioteca.total_usuarios()}}
-                    </p>
-                </div>
-            </a>
+                <a href="{{url_for('libros')}}">
+                    <div class="card-resumen">
+                        <p>
+                            <strong>Disponibles:</strong>
+                            {{biblioteca.disponibles()}}
+                        </p>
+                    </div>
+                </a>
+                <a href="{{url_for('usuarios')}}">
+                    <div class="card-resumen">
+                        <p>
+                            <strong>Usuarios:</strong>
+                            {{biblioteca.total_usuarios()}}
+                        </p>
+                    </div>
+                </a>
+            </div>
         </div>
-    </div>
 
-        <div class="imagen-biblioteca">
-            <img src="{{ url_for ('static',filename='biblioteca.jpg')}}" 
-            alt="Biblioteca">
+        <div class="imagen-container">
+            <img
+                src="{{ url_for ('static',filename='biblioteca.jpg')}}"
+                alt="Biblioteca"
+            />
         </div>
     </div>
 </section>

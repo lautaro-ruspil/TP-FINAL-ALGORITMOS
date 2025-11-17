@@ -1,4 +1,4 @@
-/* -------- TÍTULO -------- */
+/* Título Principal */
 h2 {
     font-size: 2rem;
     font-weight: 700;
@@ -7,7 +7,7 @@ h2 {
     text-align: center;
 }
 
-/* -------- CONTENEDOR PRINCIPAL -------- */
+/* Contenedor Principal */
 main {
     background-color: var(--card);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -18,10 +18,7 @@ main {
     margin: 2rem auto;
 }
 
-/* ===========================
-   FORMULARIO DE EDICIÓN
-=========================== */
-
+/* Formulario de edición */
 .form-editar {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -30,7 +27,7 @@ main {
     border-radius: 12px;
 }
 
-.form-editar div {
+.form-editar .campo {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -52,29 +49,30 @@ main {
     font-size: 1rem;
     background-color: #fff;
     transition: border 0.2s ease, box-shadow 0.2s ease;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.2rem;
 }
 
-/* Efecto focus (si no hay error) */
+/* Efecto input focus (si no hay error) */
 .form-editar input:focus:not(.input-error) {
     border-color: var(--color-primario);
     box-shadow: 0 0 6px rgba(72, 159, 181, 0.4);
     outline: none;
 }
 
-/* -------- CAMPOS NO EDITABLES -------- */
+/* Campos no editables */
 .no-editable {
     font-size: 0.85rem;
     color: gray;
 }
 
-/* -------- ESTILO DE ERROR -------- */
+/* Estilos de error */
 input.input-error {
     border-color: var(--rojo-error) !important;
     box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
     outline: none !important;
 }
 
+/* Estilos de error cuando el campo está enfocado */
 input.input-error:focus {
     border-color: var(--rojo-error) !important;
     box-shadow: 0 0 6px rgba(255, 0, 0, 0.5) !important;
@@ -87,7 +85,7 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-/* -------- MENSAJES DE ERROR -------- */
+/* Mensajes de error */
 .error {
     color: var(--rojo-error);
     font-size: 0.85rem;
@@ -96,11 +94,8 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: 500;
 }
 
-/* ===========================
-   BOTONES
-=========================== */
-
-.botones {
+/* Contenedor de botones (guardar - cancelar) */
+.container-buttons {
     grid-column: 1 / -1;
     display: flex;
     justify-content: center;
@@ -108,7 +103,8 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-top: 2rem;
 }
 
-.botones button {
+/* Estilos de boton guardar cambios */
+.container-buttons button {
     background-color: var(--color-acento);
     color: #fff;
     padding: 1rem 2rem;
@@ -121,15 +117,16 @@ input[type="number"]::-webkit-inner-spin-button {
     box-shadow: 0 4px 10px rgba(255, 166, 43, 0.3);
 }
 
-.botones button:hover {
+/* Efecto hover de boton guardar cambios*/
+.container-buttons button:hover {
     background-color: var(--color-primario);
     transform: translateY(-1px);
 }
 
 /* Botón cancelar */
 .btn-cancelar {
-    background-color: #ccc;
-    color: #333;
+    background-color: var(--color-boton-cancelar);
+    color: #fff;
     padding: 1rem 2rem;
     border-radius: 8px;
     font-weight: 600;
@@ -138,7 +135,8 @@ input[type="number"]::-webkit-inner-spin-button {
     transition: background 0.2s;
 }
 
+/* Efectos de hover botón cancelar */
 .btn-cancelar:hover {
-    background-color: var(--rojo-error);
+    background-color: var(--color-boton-cancelar-hover);
     color: #fff;
 }
