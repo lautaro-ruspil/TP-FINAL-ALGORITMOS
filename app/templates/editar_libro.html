@@ -1,6 +1,10 @@
 {% extends "base.html" %} {% block title %}Editar Libro{% endblock %} {% block
-content %}
-<link rel="stylesheet" href="../static/css/libros.css" />
+content %} {% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/libros.css') }}"
+/>
+{% endblock %}
 
 <h2>Editar Libro</h2>
 
@@ -63,7 +67,7 @@ content %}
     <div class="acciones-form">
         <button type="submit" class="btn-primario">Guardar cambios</button>
         <a href="{{ url_for('libros') }}">
-            <button type="button" class="angryButton">Cancelar</button>
+            <button type="button" class="cancelar">Cancelar</button>
         </a>
     </div>
 </form>

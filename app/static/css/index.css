@@ -1,13 +1,10 @@
-/* ===========================
-   🎨 PALETA AZUL-NARANJA
-=========================== */
-
+/* Paleta de colores  */
 :root {
-    --color-primario-oscuro: #16697a; /* Azul petróleo */
-    --color-primario: #489fb5; /* Azul medio */
-    --color-primario-claro: #82c0cc; /* Azul cielo */
-    --color-fondo: #ede7e3; /* Fondo claro */
-    --color-acento: #ffa62b; /* Naranja acento */
+    --color-primario-oscuro: #16697a;
+    --color-primario: #489fb5;
+    --color-primario-claro: #82c0cc;
+    --color-fondo: #ede7e3;
+    --color-acento: #ffa62b;
 
     /* Derivados */
     --color-texto: #1e2b2f;
@@ -15,12 +12,13 @@
     --color-borde: #cdd6d9;
     --color-card: #f9f9f9;
     --color-gris-suave: #f3f3f3;
+    --color-boton-cancelar: #e74c3c;
+    --color-boton-cancelar-hover: #c0392b;
     --rojo-error: #d93025;
+    --gris-texto: #444;
 }
 
-/* ===========================
-   BASE GENERAL
-=========================== */
+/* Base General  */
 
 html,
 body {
@@ -44,13 +42,11 @@ main {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    width: fit-content;
+    max-width: 1200px;
     margin: 40px auto;
 }
 
-/* ===========================
-   HEADER
-=========================== */
+/* Header */
 
 header {
     background-color: var(--color-primario-oscuro);
@@ -69,6 +65,7 @@ header .container {
     align-items: center;
 }
 
+/* Titulo Principal del Header */
 header h2 {
     margin: 0;
     font-weight: 500;
@@ -77,19 +74,18 @@ header h2 {
     font-family: "Montserrat";
 }
 
+/* Link Titulo Principal */
 header a {
     text-decoration: none;
 }
 
-/* ===========================
-   NAV
-=========================== */
-
+/* Navbar */
 nav {
     display: flex;
     gap: 20px;
 }
 
+/* Links del Header */
 nav a {
     color: #fff;
     text-decoration: none;
@@ -100,50 +96,48 @@ nav a {
     transition: background 0.2s, color 0.2s;
 }
 
+/* Efecto Hover a los links del Navbar */
 nav a:hover {
     background-color: var(--color-primario);
 }
 
+/* Clase para mostrar link activo */
 nav a.activo {
     background-color: var(--color-acento);
     color: #fff;
     cursor: default;
 }
 
-/* ===========================
-   DASHBOARD / CONTENIDO
-=========================== */
+/* Dashboard y contenido*/
 
+/* Título Principal Dashboard */
 .dashboard h2 {
     color: var(--color-primario-oscuro);
-    font-size: 1.8 rem;
+    font-size: 1.8rem;
     margin-bottom: 10px;
 }
 
+/* Descripción breve dashboard */
 .dashboard p {
     color: var(--color-primario);
     max-width: 300px;
     margin-top: 30px;
 }
 
-.container-resumen{
+/* Contenedor de card informativas dashboard */
+.container-resumen {
     margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
 }
 
+/* Link clickeable de card informativa */
 .container-resumen a {
     text-decoration: none;
 }
 
-.card-resumen p {
-    margin: 0;
-    line-height: 1.2;
-    font-weight: 500;
-    color: #fff;
-}
-
+/* Tarjeta informativa dashboard */
 .card-resumen {
     display: flex;
     justify-content: center;
@@ -160,17 +154,27 @@ nav a.activo {
     cursor: pointer;
 }
 
+/* Efecto hover a Tarjeta informativa dashboard */
 .card-resumen:hover {
     background-color: var(--color-acento);
     color: #fff;
     transform: translateY(-6px);
 }
 
-.dashboard-imagen {
+/* Texto de card informativa */
+.card-resumen p {
+    margin: 0;
+    line-height: 1.2;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Contenedor principal */
+.dashboard-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: nowrap; 
+    flex-wrap: nowrap;
     gap: 50px;
     padding: 40px;
 }
@@ -180,92 +184,20 @@ nav a.activo {
     max-width: 450px; /* controla el ancho del texto + botones */
 }
 
-.imagen-biblioteca {
+/* Contenedor de la imagen */
+.imagen-container {
     flex: 1;
     display: flex;
     justify-content: center;
 }
 
-.imagen-biblioteca img {
+/* Imágen */
+.imagen-container img {
     width: 500px;
     max-width: 100%;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
-
-/* ===========================
-   FORMULARIOS Y BOTONES
-=========================== */
-
-button {
-    background-color: var(--color-acento);
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background-color: var(--color-primario);
-}
-
-input,
-select,
-textarea {
-    padding: 8px;
-    border: 1px solid var(--color-borde);
-    border-radius: 6px;
-    width: 100%;
-    margin-bottom: 12px;
-    background-color: var(--color-fondo);
-    color: var(--color-texto);
-}
-
-/* Estados */
-.prestado {
-    color: #c0392b;
-}
-
-.disponible {
-    color: #27ae60;
-}
-
-/* ===========================
-   TABLAS
-=========================== */
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: var(--color-card);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-th,
-td {
-    border: 1px solid var(--color-borde);
-    padding: 10px 12px;
-    text-align: left;
-}
-
-th {
-    background-color: var(--color-primario);
-    color: #fff;
-    font-weight: 600;
-}
-
-tr:nth-child(even) {
-    background-color: var(--color-gris-suave);
-}
-
-/* ===========================
-   FOOTER FIJO AL FONDO
-=========================== */
 
 footer {
     text-align: center;
@@ -274,5 +206,5 @@ footer {
     color: var(--color-acento);
     background-color: var(--color-primario-oscuro);
     border-top: 2px solid var(--color-borde);
-    margin-top: auto; /* Mantiene el footer abajo */
+    margin-top: auto;
 }

@@ -8,8 +8,8 @@
 {% block content %}
 <h2>Gestión de Usuarios</h2>
 
-<!-- FILTRO DE BÚSQUEDA -->
-<form id="filtrado" method="get" action="{{ url_for('usuarios') }}">
+<!-- Filtro de búsqueda -->
+<form  id='filtrado' class="filtrado" method="get" action="{{ url_for('usuarios') }}">
     <label>
         Filtrar por
         <select name="campo" id="campoUsuario">
@@ -28,9 +28,9 @@
         </select>
     </label>
 
-    <input type="text" name="q" id="buscarUsuario" value="{{ q }}" placeholder="Buscar usuario..." />
+    <input type="text" name="q" id="buscarUsuario" value="{{ q }}" placeholder="Buscar usuarios..." />
     <button type="submit">Buscar</button>
-    <button type="button" class="angryButton" id="btnLimpiarUsuarios">Limpiar</button>
+    <button type="button" class="limpiar" id="btnLimpiarUsuarios">Limpiar</button>
 </form>
 
 <!-- TABLA DE USUARIOS -->
@@ -143,17 +143,17 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // === Expresiones regulares ===
+    // Expresiones regulares
     const regex = {
-        nombre: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/,                  // solo letras y espacios, min 2 caracteres
-        apellido: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/,                // solo letras y espacios, min 2 caracteres
-        dni: /^[0-9]{7,8}$/,                                     // 7 u 8 dígitos
-        telefono: /^[0-9\-]{11}$/,                               // permite - y 11 dígitos contado el guión
-        direccion: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,-]{3,}$/,          // letras, números, espacios y símbolos básicos
-        nro_direccion: /^[0-9]{1,5}$/                            // número entre 1 y 5 dígitos
+        nombre: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/, // solo letras y espacios, min 2 caracteres
+        apellido: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}$/, // solo letras y espacios, min 2 caracteres
+        dni: /^[0-9]{7,8}$/, // 7 u 8 dígitos
+        telefono: /^[0-9\-]{11}$/, // permite - y 11 dígitos contado el guión
+        direccion: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,-]{3,}$/, // letras, números, espacios y símbolos básicos
+        nro_direccion: /^[0-9]{1,5}$/// número entre 1 y 5 dígitos
     };
 
-    // === Mensajes de error personalizados ===
+    // Mensajes de error personalizados
     const mensajes = {
         nombre: "El nombre debe tener al menos 2 letras y solo puede contener letras y espacios.",
         apellido: "El apellido debe tener al menos 2 letras y solo puede contener letras y espacios.",
@@ -163,11 +163,11 @@ document.addEventListener("DOMContentLoaded", () => {
         nro_direccion: "El número de dirección debe ser un número de hasta 5 dígitos."
     };
 
-    // === Elementos del formulario ===
+    // Elementos del formulario 
     const form = document.getElementById("form-usuario");
     const inputs = form.querySelectorAll("input");
 
-    // === Validación en vivo ===
+    // Validación en vivo 
     inputs.forEach(input => {
         input.addEventListener("input", () => validarCampo(input));
     });
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // === Bloquear envío si hay errores ===
+    //  Bloquear envío si hay errores 
     form.addEventListener("submit", e => {
         let valido = true;
 
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- FILTRADO EN VIVO -->
+<!-- Filtradao en vivo -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const inputBusqueda = document.querySelector('#buscarUsuario');
@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- SWEET ALERT PARA ELIMINACIÓN -->
+<!-- Sweet alert para eliminación de usuarios -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function mostrarAlerta(e, form) {
@@ -330,6 +330,7 @@ function mostrarAlerta(e, form) {
     return false;
 }
 </script>
+
 <!-- Script para guardar la posicion del scroll donde estaba el usuario y no se recargue la pagina y redireccione hacia arriba del todo -->
 <script>
     window.addEventListener("beforeunload", (e) => {

@@ -1,5 +1,3 @@
-from .usuario import Usuario
-
 
 class Biblioteca:
     def __init__(self, users=None):
@@ -19,12 +17,12 @@ class Biblioteca:
         return len(self.libros)
 
     def disponibles(self):
-        # suma de stocks de los libros que no están prestados
-        return sum(l.stock for l in self.libros if not l.prestados)
+        return sum(l.stock for l in self.libros)
+
 
     def prestados(self):
-        # cuenta de libros prestados
-        return sum(1 for l in self.libros if l.prestados)
+        return sum(l.prestados for l in self.libros)
+
 
     def eliminar(self, titulo):
         for libro in self.libros:

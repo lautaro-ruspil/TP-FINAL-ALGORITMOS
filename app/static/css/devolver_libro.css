@@ -1,4 +1,14 @@
-/* -------- TÍTULO Y SUBTÍTULO -------- */
+/* Contenedor Principal */
+main {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 95%;
+    max-width: 1100px;
+    margin: 2rem auto;
+}
+
+/* Título */
 h2 {
     font-size: 2rem;
     font-weight: 700;
@@ -7,16 +17,7 @@ h2 {
     margin-bottom: 0.5rem;
 }
 
-.usuario-target {
-    text-align: center;
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #c3c3c3;
-}
-
-/* -------- SIN LIBROS -------- */
+/* Mensaje: Sin libros para devolver */
 .no-libros {
     text-align: center;
     font-size: 1.1rem;
@@ -28,9 +29,7 @@ h2 {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* ===========================
-   TABLA DE LIBROS
-=========================== */
+/* Tabla de libros */
 .table-container {
     overflow-x: auto;
     width: 100%;
@@ -49,8 +48,8 @@ table {
 th,
 td {
     padding: 1rem 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid var(--color-borde);
+    text-align: center;
+    border: 1px solid var(--color-borde);
 }
 
 th {
@@ -58,7 +57,7 @@ th {
     color: #fff;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     letter-spacing: 0.5px;
 }
 
@@ -77,16 +76,15 @@ tr:hover td {
     transition: background 0.2s ease;
 }
 
-/* ===========================
-   BOTONES
-=========================== */
-.container-action {
+/* Contenedor botón devolver */
+.container-devolver {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.devolver {
+/* Botón Devolver */
+.btn-devolver {
     background-color: var(--color-acento);
     color: #fff;
     padding: 0.6rem 1rem;
@@ -99,18 +97,20 @@ tr:hover td {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.devolver:hover {
+.btn-devolver:hover {
     background-color: var(--color-primario);
     transform: translateY(-1px);
 }
 
+/* Contenedor botón volver */
 .container-volver {
     text-align: center;
     margin-top: 3rem;
 }
 
+/* Botón Volver */
 .btn-volver {
-    background-color: #e74c3c;
+    background-color: var(--color-boton-cancelar);
     color: #fff;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -122,6 +122,6 @@ tr:hover td {
 }
 
 .btn-volver:hover {
-    background-color: #c0392b;
+    background-color: var(--color-boton-cancelar-hover);
     transform: translateY(-1px);
 }

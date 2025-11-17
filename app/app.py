@@ -110,7 +110,7 @@ def buscar_libros():
             "autor": l.autor,
             "genero": l.genero,
             "stock": l.stock,
-            "prestado": l.prestados
+            "prestados": l.prestados
         }
         for l in libros_filtrados
     ])
@@ -231,7 +231,7 @@ def buscar_usuarios():
     campo = request.args.get('campo', 'nombre')
     orden = request.args.get('orden', 'Ascendente')
 
-    users = Usuario.query.all()
+    users = biblioteca.users
     filtrados = []
 
     for u in users:
@@ -302,8 +302,7 @@ def confirmar_prestamo(id_usuario, id_libro):
 
     # Registrar préstamo
     usuario.libros.append(libro)
-    libro.prestar()  # 👈 ahora usa el método que resta stock y suma prestados
-
+    libro.prestar()
     return jsonify({
         "ok": True,
         "msg": f"Libro '{libro.titulo}' prestado correctamente a {usuario.nombre}."

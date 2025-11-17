@@ -1,4 +1,4 @@
-/* -------- TÍTULO -------- */
+/* Titulo */
 h2 {
     font-size: 2rem;
     font-weight: 700;
@@ -7,7 +7,7 @@ h2 {
     text-align: center;
 }
 
-/* -------- SEPARADOR -------- */
+/* Separador */
 hr {
     border: none;
     border-top: 1px solid var(--borde);
@@ -16,7 +16,7 @@ hr {
     max-width: 1100px;
 }
 
-/* -------- CONTENEDOR PRINCIPAL -------- */
+/* Contenedor Principal */
 main {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
@@ -26,11 +26,8 @@ main {
     margin: 2rem auto;
 }
 
-/* ===========================
-   FORMULARIO FILTRADO
-=========================== */
-
-#filtrado {
+/* Formulario Filtrado */
+.filtrado {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -44,30 +41,33 @@ main {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-#filtrado label {
+/* Etiquetas del formulario */
+.filtrado label {
     font-weight: 600;
     color: var(--color-primario-oscuro);
 }
 
-#filtrado select,
-#filtrado input[type="text"] {
+.filtrado select,
+.filtrado input[type="text"] {
     padding: 0.8rem 1rem;
     border: 1px solid var(--color-borde);
     border-radius: 8px;
+    width: 100%;
+    margin-bottom: 12px;
     font-size: 0.95rem;
     background-color: var(--color-card);
     transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-#filtrado select:focus,
-#filtrado input[type="text"]:focus {
+.filtrado select:focus,
+.filtrado input[type="text"]:focus {
     border-color: var(--color-primario);
     box-shadow: 0 0 6px rgba(72, 159, 181, 0.3);
     outline: none;
 }
 
 /* Botones del filtrado */
-#filtrado button {
+.filtrado button {
     background-color: var(--color-acento);
     color: #fff;
     padding: 0.8rem 1.3rem;
@@ -79,16 +79,16 @@ main {
     transition: background 0.2s ease, transform 0.1s ease;
 }
 
-#filtrado button:hover {
+.filtrado button:hover {
     background-color: var(--color-primario);
     transform: translateY(-1px);
 }
 
 /* Botón limpiar */
-#filtrado .angryButton {
+.filtrado .limpiar {
     background-color: #e74c3c;
 }
-#filtrado .angryButton:hover {
+.filtrado .limpiar:hover {
     background-color: #c0392b;
 }
 
@@ -98,23 +98,28 @@ main {
 
 .table-container {
     overflow-x: auto;
-    margin-top: 1rem;
+    margin-top: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1000px;
+    margin-top: 20px;
+    background-color: var(--color-card);
+    border-radius: 6px;
+    min-width: 900px;
     font-size: 0.95rem;
+    overflow: hidden;
 }
 
 th,
 td {
-    padding: 1rem;
+    border: 1px solid var(--color-borde);
+    padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid var(--color-borde);
 }
 
 th {
@@ -122,11 +127,12 @@ th {
     color: #fff;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     text-align: center;
 }
 
 td {
+    color: var(--color-texto);
     vertical-align: top;
     text-align: center;
 }
@@ -203,6 +209,16 @@ td:nth-child(9) {
 
 .container-buttons form:nth-child(2) button:hover {
     background-color: #c0392b;
+}
+
+/* Botón prestar */
+.container-buttons form:nth-child(3) button {
+    background-color: var(--color-acento);
+    color: #fff;
+}
+
+.container-buttons form:nth-child(3) button:hover {
+    background-color: var(--color-primario);
 }
 
 /* Botón prestar */

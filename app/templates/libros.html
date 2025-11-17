@@ -1,10 +1,15 @@
-{% extends "base.html" %} {% block title %}Gestión de Libros{% endblock %} {%
-block content %}
-<link rel="stylesheet" href="../static/css/libros.css" />
+{% extends "base.html" %}
+{% block title %}Gestión de Libros{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/libros.css') }}">
+{% endblock %}
+
+{% block content %}
 <h2>Gestión de Libros</h2>
 
 <!-- Búsqueda -->
-<form id="filtrado" method="get" action="{{ url_for('libros') }}">
+<form id="filtrado" class="filtrado" method="get" action="{{ url_for('libros') }}">
     <label>
         Filtrar por
         <select name="campo" id="caracteristica">
@@ -22,11 +27,10 @@ block content %}
         </select>
     </label>
 
-    <input type="text" name="q" value="{{ q }}" placeholder="Buscar..." />
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar libros..." />
     <button type="submit">Buscar</button>
-    <button type="button" class="angryButton" id="btnLimpiar">Limpiar</button>
+    <button type="button" class="limpiar" id="btnLimpiar">Limpiar</button>
 </form>
-
 
 <!-- Tabla -->
 {% if books %}
@@ -42,7 +46,7 @@ block content %}
             <th>Acción</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="tabla-libros">
         {% for book in books %}
         <tr>
             <td>{{ book.id_libro }}</td>
@@ -50,17 +54,17 @@ block content %}
             <td>{{ book.autor }}</td>
             <td>{{ book.genero }}</td>
             <td class="estado-resumen">
-                {{ book.stock }} <span class="disponible"">disponibles</span> - {{ book.prestados }}  <span class="prestado">prestados</span>
+                {{ book.stock }} <span class="disponible">disponibles</span> - {{ book.prestados }} <span class="prestado">prestados</span>
             </td>
             <td>
                 <div class="container-buttons">
-                    <form action="{{ url_for('editar', id_libro= book.id_libro) }}">
-                        <button class="editar">Editar</button>
-                    </form>
-                    <form method="post"  onsubmit="mostrarAlerta(event,this)" action="{{ url_for('eliminar', id_libro= book.id_libro) }}">
-                        <button class="eliminar">Eliminar</button>
+                    <form action="{{ url_for('editar', id_libro= book.id_libro) }}" method="get">
+                        <button class="editar" type="submit">Editar</button>
                     </form>
 
+                    <form method="post" onsubmit="return mostrarAlerta(event,this)" action="{{ url_for('eliminar', id_libro= book.id_libro) }}">
+                        <button class="eliminar" type="submit">Eliminar</button>
+                    </form>
                 </div>
             </td>
         </tr>
@@ -71,50 +75,32 @@ block content %}
 {% else %}
 <p>No hay libros registrados.</p>
 {% endif %}
+
 <hr />
+
 <form id="formAgregar" method="POST" class="form-agregar-libro">
     <div class="campos-form">
         <div class="campo">
             <label for="input-titulo">Título:</label>
-            <input
-                id="input-titulo"
-                type="text"
-                name="titulo"
-                placeholder="Ej: Rayuela"
-            />
+            <input id="input-titulo" type="text" name="titulo" placeholder="Ej: Rayuela" />
             <span class="error" data-field="titulo"></span>
         </div>
 
         <div class="campo">
             <label for="input-autor">Autor:</label>
-            <input
-                id="input-autor"
-                type="text"
-                name="autor"
-                placeholder="Ej: Julio Cortázar"
-            />
+            <input id="input-autor" type="text" name="autor" placeholder="Ej: Julio Cortázar" />
             <span class="error" data-field="autor"></span>
         </div>
 
         <div class="campo">
             <label for="input-genero">Género:</label>
-            <input
-                id="input-genero"
-                type="text"
-                name="genero"
-                placeholder="Ej: Ficción"
-            />
+            <input id="input-genero" type="text" name="genero" placeholder="Ej: Ficción" />
             <span class="error" data-field="genero"></span>
         </div>
 
         <div class="campo">
             <label for="input-stock">Stock:</label>
-            <input
-                id="input-stock"
-                type="number"
-                name="stock"
-                placeholder="Ej: 20"
-            />
+            <input id="input-stock" type="number" name="stock" placeholder="Ej: 20" />
             <span class="error" data-field="stock"></span>
         </div>
     </div>
@@ -122,66 +108,96 @@ block content %}
     <button type="submit" class="btn-primario">Agregar Libro</button>
 </form>
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+/* ---------- Utils ---------- */
+function mostrarAlerta(e, form) {
+    e.preventDefault();
+    Swal.fire({
+        title: "¿Desea eliminar el libro?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "var(--color-primario-oscuro)",
+        cancelButtonColor: "var(--rojo-error)",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) form.submit();
+    });
+    return false;
+}
+
+/* Validación y formulario agregar */
 document.addEventListener("DOMContentLoaded", () => {
-    // === Expresiones regulares ===
+    /* Expresiones regulares para validar los inputs */
     const regex = {
         titulo: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,:-]{2,}$/,
         autor: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/,
-        genero: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/
+        genero: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/,
+        stock: /^[0-9]+$/
     };
 
-    // === Mensajes de error personalizados ===
+    // Mensajes correspondientes al tipo de error
     const mensajes = {
         titulo: "El título debe tener al menos 2 caracteres y no contener símbolos especiales.",
         autor: "El autor debe tener al menos 3 letras y solo contener letras y espacios.",
-        genero: "El género debe tener al menos 3 letras y solo contener letras y espacios."
+        genero: "El género debe tener al menos 3 letras y solo contener letras y espacios.",
+        stock: "El stock no puede ser negativo."
     };
 
-    // === Elementos del formulario ===
+    // obtenemos el formulario y los inputs
     const form = document.getElementById("formAgregar");
     const inputs = form.querySelectorAll("input");
 
-    // === Validación en vivo ===
-    inputs.forEach(input => {
-        input.addEventListener("input", () => validarCampo(input));
-    });
-
+    // Función para validar campo
     function validarCampo(input) {
-    const valor = input.value.trim();
-    const error = input.parentElement.querySelector(".error");
+        const valor = input.value.trim();
+        const errorEl = input.parentElement.querySelector(".error");
+        const name = input.name;
 
-    if (valor === "") {
-        error.textContent = "Este campo es obligatorio.";
-        error.classList.add("visible");
-        input.classList.add("error-border");
-        return false;
-    } else if (!regex[input.name].test(valor)) {
-        error.textContent = mensajes[input.name];
-        error.classList.add("visible");
-        input.classList.add("error-border");
-        return false;
-    } else {
-        error.textContent = "";
-        error.classList.remove("visible");
+        if (!valor) {
+            errorEl.textContent = "Este campo es obligatorio.";
+            input.classList.add("error-border");
+            return false;
+        }
+
+        if (name === "stock") {
+            const n = parseInt(valor, 10);
+            if (isNaN(n) || n < 1) {
+                errorEl.textContent = mensajes.stock;
+                input.classList.add("error-border");
+                return false;
+            }
+            errorEl.textContent = "";
+            input.classList.remove("error-border");
+            return true;
+        }
+
+        if (!regex[name].test(valor)) {
+            errorEl.textContent = mensajes[name];
+            input.classList.add("error-border");
+            return false;
+        }
+
+        errorEl.textContent = "";
         input.classList.remove("error-border");
         return true;
     }
-}
 
-    // === Bloquear envío si hay errores ===
-    form.addEventListener("submit", e => {
-        let valido = true;
+    // Por cada input del formulario llamos a la función validarcampo
+    inputs.forEach(input => input.addEventListener("input", () => validarCampo(input)));
 
-        inputs.forEach(input => {
-            const ok = validarCampo(input);
-            if (!ok) valido = false;
-        });
-
-        if (!valido) {
+    /* 
+        Cuando se intenta enviar el formulario validamos 
+        si a través de la bandera booleana los campos están correctos
+    */
+    form.addEventListener("submit", (e) => {
+        let ok = true;
+        inputs.forEach(i => { if (!validarCampo(i)) ok = false; });
+        // Si la bandera en algún input no es True mostramos alerta
+        if (!ok) {
             e.preventDefault();
             Swal.fire({
                 icon: "error",
@@ -192,93 +208,96 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // === VALIDAR FILTRADO ===
+    /* Filtrado - validación (submit normal) */
     const filtro = document.getElementById("filtrado");
-    if (filtro) {
-        filtro.addEventListener("submit", e => {
-            const q = e.target.querySelector('input[name="q"]').value.trim();
-            if (q && q.length < 2) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: "error",
-                    title: "Búsqueda inválida",
-                    text: "La búsqueda debe tener al menos 2 caracteres.",
-                });
-            }
-        });
-    }
+    filtro.addEventListener("submit", (e) => {
+        const q = filtro.querySelector('input[name="q"]').value.trim();
+        if (q && q.length < 2) {
+            e.preventDefault();
+            Swal.fire({
+                icon: "error",
+                title: "Búsqueda inválida",
+                text: "La búsqueda debe tener al menos 2 caracteres.",
+            });
+        }
+    });
 
-    // === LIMPIAR FILTRO ===
-    const btnLimpiar = document.getElementById("btnLimpiar");
-    if (btnLimpiar) {
-        btnLimpiar.addEventListener("click", () => {
-            const form = document.getElementById("filtrado");
-            form.querySelectorAll("input").forEach(input => input.value = "");
-            form.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
-        });
-    }
+    /* Limpiar filtro*/
+    document.getElementById("btnLimpiar").addEventListener("click", () => {
+        filtro.querySelectorAll("input").forEach(input => input.value = "");
+        filtro.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+        const inputBusqueda = filtro.querySelector('input[name="q"]');
+        if (inputBusqueda) inputBusqueda.dispatchEvent(event);
+    });
 });
 </script>
-<!-- Resultado de busqueda -->
+
+<!-- Resultado de búsqueda (AJAX) -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const inputBusqueda = document.querySelector('#filtrado input[name="q"]');
     const campoSelect = document.getElementById("caracteristica");
     const ordenSelect = document.getElementById("caracteristicaDos");
-    const tbody = document.querySelector("tbody");
-
+    const tbody = document.getElementById("tabla-libros");
     let timer;
 
-    if (inputBusqueda && tbody) {
-        inputBusqueda.addEventListener("input", () => {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const q = inputBusqueda.value.trim();
-                const campo = campoSelect.value;
-                const orden = ordenSelect.value;
+    function renderRows(data) {
+        tbody.innerHTML = "";
+        if (!data || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6">No hay resultados.</td></tr>`;
+            return;
+        }
 
-                fetch(`/buscar_libros?q=${encodeURIComponent(q)}&campo=${campo}&orden=${orden}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        tbody.innerHTML = "";
+        // construimos filas (manteniendo estructura compatible con el CSS)
+        data.forEach(book => {
+            const tr = document.createElement("tr");
 
-                        if (data.length === 0) {
-                            tbody.innerHTML = `<tr><td colspan="6">No hay resultados.</td></tr>`;
-                            return;
-                        }
-
-                        data.forEach(book => {
-                            const tr = document.createElement("tr");
-                            tr.innerHTML = `
-                                <td>${book.id_libro}</td>
-                                <td>${book.titulo}</td>
-                                <td>${book.autor}</td>
-                                <td>${book.genero}</td>
-                                <td class="estado-resumen">
-                                    ${book.stock} <span class="disponible"">disponibles</span> - ${book.prestado}  <span class="prestado">prestados</span>
-                                </td>
-                                <td>
-                                    <div class="container-buttons">
-                                        <form onsubmit="return mostrarAlerta(event, this)" method="post" action="/eliminar/${book.id_libro}">
-                                            <button class="eliminar">Eliminar</button>
-                                        </form>
-                                        <form method="get" action="/editar/${book.id_libro}">
-                                            <button class="editar" type="submit">Editar</button>
-                                        </form>
-                                        ${book.prestado ? `
-                                        <form method="post" action="/devolver/${book.id_libro}">
-                                            <button  type="submit" class="devolver">Devolver</button>
-                                        </form>` : ""}
-                                    </div>
-                                </td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
-                    })
-                    .catch(err => console.error("Error al buscar libros:", err));
-            }, 300); // espera 300ms entre tecleos
+            tr.innerHTML = `
+                <td>${book.id_libro}</td>
+                <td>${book.titulo}</td>
+                <td>${book.autor}</td>
+                <td>${book.genero}</td>
+                <td class="estado-resumen">
+                    ${book.stock} <span class="disponible">disponibles</span> - ${book.prestados} <span class="prestado">prestados</span>
+                </td>
+                <td>
+                    <div class="container-buttons">
+                        <form method="get" action="/editar/${book.id_libro}">
+                            <button class="editar" type="submit">Editar</button>
+                        </form>
+                        <form method="post" action="/eliminar/${book.id_libro}" onsubmit="return mostrarAlerta(event,this)">
+                            <button class="eliminar" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
         });
     }
+
+    // Solo attach si existe el input y la tabla
+    if (!inputBusqueda || !tbody) return;
+
+    inputBusqueda.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            const q = inputBusqueda.value.trim();
+            const campo = campoSelect.value;
+            const orden = ordenSelect.value;
+
+            fetch(`/buscar_libros?q=${encodeURIComponent(q)}&campo=${encodeURIComponent(campo)}&orden=${encodeURIComponent(orden)}`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Error en la respuesta');
+                    return res.json();
+                })
+                .then(data => renderRows(data))
+                .catch(err => {
+                    console.error("Error al buscar libros:", err);
+                    // no romper la UI: mostrar mensaje
+                    tbody.innerHTML = `<tr><td colspan="6">Error al buscar resultados.</td></tr>`;
+                });
+        }, 300);
+    });
 
     // también actualizar al cambiar los selects
     [campoSelect, ordenSelect].forEach(select => {
@@ -289,41 +308,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
-<!-- Alerta de eliminación -->
-
+<!-- Guardado de scroll -->
 <script>
-    function mostrarAlerta(e, form) {
-        e.preventDefault();
-        Swal.fire({
-            title: "¿Desea eliminar el libro?",
-            text: "Esta acción no se puede deshacer.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "var(--color-primario-oscuro)",
-            cancelButtonColor: "var(--rojo-error)",
-            confirmButtonText: "Sí, eliminar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-        return false;
+window.addEventListener("beforeunload", () => {
+    localStorage.setItem("scrollPosition", window.scrollY);
+});
+window.addEventListener("load", () => {
+    const scrollPosition = localStorage.getItem("scrollPosition");
+    if (scrollPosition) {
+        window.scrollTo(0, scrollPosition);
+        localStorage.removeItem("scrollPosition");
     }
+});
 </script>
-<!-- Script para guardar la posicion del scroll donde estaba el usuario y no se recargue la pagina y redireccione hacia arriba del todo -->
-<script>
-    window.addEventListener("beforeunload", (e) => {
-        localStorage.setItem("scrollPosition", window.scrollY);
-    });
 
-    window.addEventListener("load", () => {
-        const scrollPosition = localStorage.getItem("scrollPosition");
-        if (scrollPosition) {
-            window.scrollTo(0, scrollPosition);
-            localStorage.removeItem("scrollPosition");
-        }
-    });
-</script>
 {% endblock %}
