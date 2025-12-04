@@ -1,4 +1,3 @@
-
 class Biblioteca:
     def __init__(self, users=None):
         self.libros = []
@@ -19,10 +18,8 @@ class Biblioteca:
     def disponibles(self):
         return sum(l.stock for l in self.libros)
 
-
     def prestados(self):
         return sum(l.prestados for l in self.libros)
-
 
     def eliminar(self, titulo):
         for libro in self.libros:

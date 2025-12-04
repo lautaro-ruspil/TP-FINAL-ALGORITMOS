@@ -325,7 +325,33 @@ function mostrarAlerta(e, form) {
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar",
     }).then((result) => {
-        if (result.isConfirmed) form.submit();
+        if (result.isConfirmed) {
+            // Realizar petición con fetch para capturar respuesta JSON
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && !data.ok) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No se puede eliminar",
+                        text: data.msg,
+                        confirmButtonColor: "var(--color-primario-oscuro)"
+                    });
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        }
     });
     return false;
 }

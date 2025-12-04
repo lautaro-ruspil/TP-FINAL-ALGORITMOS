@@ -1,4 +1,4 @@
-from flask import Flask, flash, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from models.biblioteca import Biblioteca
 from models.libro import Libro
 from models.usuario import Usuario
@@ -9,13 +9,9 @@ app = Flask(__name__)
 biblioteca = Biblioteca()
 
 # Cargar libros manualmente
-lib1 = Libro(1, "El principito", "Antoine de Saint-Exupéry", "Drama")
-lib2 = Libro(2, "Cien Años de Soledad", "Gabriel García Márquez", "Realismo mágico")
-lib3 = Libro(3, "Rayuela", "Julio Cortázar", "Ficción")
-
-biblioteca.agregar_libro(lib1)
-biblioteca.agregar_libro(lib2)
-biblioteca.agregar_libro(lib3)
+biblioteca.agregar_libro(Libro(1, "El principito", "Antoine de Saint-Exupéry", "Drama"))
+biblioteca.agregar_libro(Libro(2, "Cien Años de Soledad", "Gabriel García Márquez", "Realismo mágico"))
+biblioteca.agregar_libro(Libro(3, "Rayuela", "Julio Cortázar", "Ficción"))
 
 # Cargar usuarios iniciales
 biblioteca.agregar_usuario(
@@ -23,25 +19,25 @@ biblioteca.agregar_usuario(
         1,"Lautaro", "Ruspil", 23457382, "2284-225443", "Tierra del Fuego", 1340, 
     )
 )
+
 biblioteca.agregar_usuario(
     Usuario(
         2,"Franco", "Dell", 12345678, "2284-124443", "Tierra del Fuego", 1123, 
     )
 )
+
 biblioteca.agregar_usuario(
     Usuario(3,"Pepe", "Martinez", 23457382, "2284-225443", "Hornos", 2020)
 )
 
 
-# --- RUTAS PRINCIPALES ---
-
-
+# Ruta 0 
 @app.route("/")
 def inicio():
     return render_template("index.html", biblioteca=biblioteca, active_page="inicio")
 
 
-# ---------- LIBROS ----------
+# Ruta 1 
 @app.route("/libros", methods=["GET", "POST"])
 def libros():
     if request.method == "POST":
@@ -80,8 +76,6 @@ def libros():
         q=q,
         campo=campo,
         orden=orden,
-        disponibles=biblioteca.disponibles(),
-        prestados=biblioteca.prestados(),
         active_page="libros"
     )
 
@@ -168,6 +162,20 @@ def confirmar_devolucion(id_usuario, id_libro):
 
 @app.route("/eliminar/<int:id_libro>", methods=["POST"])
 def eliminar(id_libro):
+    # Buscar el libro
+    libro = next((l for l in biblioteca.libros if l.id_libro == id_libro), None)
+    
+    if not libro:
+        return jsonify({"ok": False, "msg": "Libro no encontrado"}), 404
+    
+    # Validar si el libro está prestado
+    if libro.prestados > 0:
+        return jsonify({
+            "ok": False, 
+            "msg": f"No se puede eliminar el libro '{libro.titulo}' porque tiene {libro.prestados} ejemplar(es) prestado(s)."
+        }), 400
+    
+    # Si no está prestado, eliminarlo
     biblioteca.libros = [l for l in biblioteca.libros if l.id_libro != id_libro]
     return redirect(url_for("libros"))
 
@@ -340,6 +348,21 @@ def actualizar_usuario(id_usuario):
 # ---------- ELIMINAR USUARIO ----------
 @app.route("/eliminar_usuario/<int:id_usuario>", methods=["POST"])
 def eliminar_usuario(id_usuario):
+    # Buscar el usuario
+    usuario = next((u for u in biblioteca.users if u.id_usuario == id_usuario), None)
+    
+    if not usuario:
+        return jsonify({"ok": False, "msg": "Usuario no encontrado"}), 404
+    
+    # Validar si tiene libros prestados
+    if len(usuario.libros) > 0:
+        titulos = ", ".join([l.titulo for l in usuario.libros])
+        return jsonify({
+            "ok": False,
+            "msg": f"No se puede eliminar al usuario {usuario.nombre} {usuario.apellido} porque tiene libro(s) prestado(s): {titulos}"
+        }), 400
+    
+    # Si no tiene libros prestados, eliminarlo
     biblioteca.eliminar_usuario(id_usuario)
     return redirect(url_for("usuarios"))
 
