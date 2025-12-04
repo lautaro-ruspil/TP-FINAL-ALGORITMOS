@@ -1,24 +1,34 @@
 {% extends "base.html" %}
+<!-- Esta plantilla hereda la estructura base del archivo base.html -->
+
 {% block title %}Gestión de Libros{% endblock %}
+<!-- Define el título que aparecerá en la pestaña del navegador -->
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/libros.css') }}">
+<!-- Carga una hoja de estilo específica para esta vista -->
 {% endblock %}
 
 {% block content %}
-<h2>Gestión de Libros</h2>
+<!-- Inicio del bloque principal de contenido que se incrusta en base.html -->
 
-<!-- Búsqueda -->
+<h2>Gestión de Libros</h2>
+<!-- Título principal de la página -->
+
+<!-- Formulario de búsqueda y filtrado -->
 <form id="filtrado" class="filtrado" method="get" action="{{ url_for('libros') }}">
+    <!-- Campo para seleccionar por qué atributo filtrar -->
     <label>
         Filtrar por
         <select name="campo" id="caracteristica">
+            <!-- Las opciones conservan el valor seleccionado usando condicionales de Jinja -->
             <option value="titulo" {% if campo == 'titulo' %}selected{% endif %}>Título</option>
             <option value="autor" {% if campo == 'autor' %}selected{% endif %}>Autor</option>
             <option value="genero" {% if campo == 'genero' %}selected{% endif %}>Género</option>
         </select>
     </label>
 
+    <!-- Campo para seleccionar el orden (ascendente/descendente) -->
     <label>
         Ordenar por
         <select name="orden" id="caracteristicaDos">
@@ -27,17 +37,19 @@
         </select>
     </label>
 
+    <!-- Input para búsqueda de texto -->
     <input type="text" name="q" value="{{ q }}" placeholder="Buscar libros..." />
     <button type="submit">Buscar</button>
     <button type="button" class="limpiar" id="btnLimpiar">Limpiar</button>
 </form>
 
-<!-- Tabla -->
+<!-- Si hay libros en la base de datos, mostrar tabla -->
 {% if books %}
 <div class="table-container">
 <table>
     <thead>
         <tr>
+            <!-- Cabeceras de la tabla -->
             <th>ID</th>
             <th>Título</th>
             <th>Autor</th>
@@ -48,20 +60,24 @@
     </thead>
     <tbody id="tabla-libros">
         {% for book in books %}
+        <!-- Iteración de cada libro -->
         <tr>
             <td>{{ book.id_libro }}</td>
             <td>{{ book.titulo }}</td>
             <td>{{ book.autor }}</td>
             <td>{{ book.genero }}</td>
             <td class="estado-resumen">
+                <!-- Muestra cuántos ejemplares disponibles y prestados hay -->
                 {{ book.stock }} <span class="disponible">disponibles</span> - {{ book.prestados }} <span class="prestado">prestados</span>
             </td>
             <td>
                 <div class="container-buttons">
+                    <!-- Botón para editar -->
                     <form action="{{ url_for('editar', id_libro= book.id_libro) }}" method="get">
                         <button class="editar" type="submit">Editar</button>
                     </form>
 
+                    <!-- Botón para eliminar -->
                     <form method="post" onsubmit="return mostrarAlerta(event,this)" action="{{ url_for('eliminar', id_libro= book.id_libro) }}">
                         <button class="eliminar" type="submit">Eliminar</button>
                     </form>
@@ -73,31 +89,37 @@
 </table>
 </div>
 {% else %}
+<!-- Si no hay libros registrados -->
 <p>No hay libros registrados.</p>
 {% endif %}
 
 <hr />
 
+<!-- Formulario para agregar un nuevo libro -->
 <form id="formAgregar" method="POST" class="form-agregar-libro">
     <div class="campos-form">
+        <!-- Campo título -->
         <div class="campo">
             <label for="input-titulo">Título:</label>
             <input id="input-titulo" type="text" name="titulo" placeholder="Ej: Rayuela" />
             <span class="error" data-field="titulo"></span>
         </div>
 
+        <!-- Campo autor -->
         <div class="campo">
             <label for="input-autor">Autor:</label>
             <input id="input-autor" type="text" name="autor" placeholder="Ej: Julio Cortázar" />
             <span class="error" data-field="autor"></span>
         </div>
 
+        <!-- Campo género -->
         <div class="campo">
             <label for="input-genero">Género:</label>
             <input id="input-genero" type="text" name="genero" placeholder="Ej: Ficción" />
             <span class="error" data-field="genero"></span>
         </div>
 
+        <!-- Campo stock -->
         <div class="campo">
             <label for="input-stock">Stock:</label>
             <input id="input-stock" type="number" name="stock" placeholder="Ej: 20" />
@@ -108,12 +130,13 @@
     <button type="submit" class="btn-primario">Agregar Libro</button>
 </form>
 
+<!-- Librería de alertas modernas -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-// Funcion para mostrar alerta personalizada
+/* ========= FUNCIÓN DE ALERTA DE ELIMINACIÓN ========= */
 function mostrarAlerta(e, form) {
-    e.preventDefault();
+    e.preventDefault(); // Evita envío del formulario inmediato
     Swal.fire({
         title: "¿Desea eliminar el libro?",
         text: "Esta acción no se puede deshacer.",
@@ -125,7 +148,7 @@ function mostrarAlerta(e, form) {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            // Realizar petición con fetch para capturar respuesta JSON
+            // Si el usuario confirma, se realiza la petición con fetch
             fetch(form.action, {
                 method: 'POST',
                 headers: {
@@ -133,13 +156,16 @@ function mostrarAlerta(e, form) {
                 }
             })
             .then(response => {
+                // Si la respuesta redirige, seguir el enlace
                 if (response.redirected) {
                     window.location.href = response.url;
                     return null;
                 }
+                // Si devuelve JSON, procesar datos
                 return response.json();
             })
             .then(data => {
+                // Si el backend devuelve error (ok: false)
                 if (data && !data.ok) {
                     Swal.fire({
                         icon: "error",
@@ -154,10 +180,12 @@ function mostrarAlerta(e, form) {
     });
     return false;
 }
+</script>
 
-/* Validación y formulario agregar */
+<!-- Validación del formulario de agregado -->
+<script>
 document.addEventListener("DOMContentLoaded", () => {
-    /* Expresiones regulares para validar los inputs */
+    /* Expresiones regulares de validación */
     const regex = {
         titulo: /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,:-]{2,}$/,
         autor: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s-]{3,}$/,
@@ -165,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stock: /^[0-9]+$/
     };
 
-    // Mensajes correspondientes al tipo de error
+    /* Mensajes de error personalizados */
     const mensajes = {
         titulo: "El título debe tener al menos 2 caracteres y no contener símbolos especiales.",
         autor: "El autor debe tener al menos 3 letras y solo contener letras y espacios.",
@@ -173,22 +201,23 @@ document.addEventListener("DOMContentLoaded", () => {
         stock: "El stock no puede ser negativo o nulo."
     };
 
-    // obtenemos el formulario y los inputs
     const form = document.getElementById("formAgregar");
     const inputs = form.querySelectorAll("input");
 
-    // Función para validar campo
+    // Función genérica para validar cada campo
     function validarCampo(input) {
         const valor = input.value.trim();
         const errorEl = input.parentElement.querySelector(".error");
         const name = input.name;
 
+        // Campo vacío
         if (!valor) {
             errorEl.textContent = "Este campo es obligatorio.";
             input.classList.add("error-border");
             return false;
         }
 
+        // Validación especial para stock numérico
         if (name === "stock") {
             const n = parseInt(valor,10);
             if (isNaN(n) || n < 1) {
@@ -201,28 +230,26 @@ document.addEventListener("DOMContentLoaded", () => {
             return true;
         }
 
+        // Validar usando regex
         if (!regex[name].test(valor)) {
             errorEl.textContent = mensajes[name];
             input.classList.add("error-border");
             return false;
         }
 
+        // Si pasa todo, limpiar error
         errorEl.textContent = "";
         input.classList.remove("error-border");
         return true;
     }
 
-    // Por cada input del formulario llamos a la función validar campo
+    // Validación en tiempo real
     inputs.forEach(input => input.addEventListener("input", () => validarCampo(input)));
 
-    /* 
-        Cuando se intenta enviar el formulario validamos 
-        si a través de la bandera booleana los campos están correctos
-    */
+    // Validación al enviar el formulario
     form.addEventListener("submit", (e) => {
         let ok = true;
         inputs.forEach(i => { if (!validarCampo(i)) ok = false; });
-        // Si la bandera en algún input no es True mostramos alerta
         if (!ok) {
             e.preventDefault();
             Swal.fire({
@@ -234,11 +261,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* Filtrado - validación (submit normal) */
+    /* Validación del formulario de búsqueda */
     const filtro = document.getElementById("filtrado");
     filtro.addEventListener("submit", (e) => {
         const q = filtro.querySelector('input[name="q"]').value.trim();
-        console.log(q)
         if (!q || q.length < 2) {
             e.preventDefault();
             Swal.fire({
@@ -249,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* Limpiar filtro*/
+    /* Botón de limpiar filtro */
     document.getElementById("btnLimpiar").addEventListener("click", () => {
         filtro.querySelectorAll("input").forEach(input => input.value = "");
         filtro.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
@@ -259,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- Resultado de búsqueda (AJAX) -->
+<!-- Búsqueda dinámica (AJAX) -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const inputBusqueda = document.querySelector('#filtrado input[name="q"]');
@@ -268,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const tbody = document.getElementById("tabla-libros");
     let timer;
 
+    // Función para renderizar las filas de la tabla
     function renderRows(data) {
         tbody.innerHTML = "";
         if (!data || data.length === 0) {
@@ -275,10 +302,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // construimos filas (manteniendo estructura compatible con el CSS)
+        // Crear dinámicamente filas para cada libro
         data.forEach(book => {
             const tr = document.createElement("tr");
-
             tr.innerHTML = `
                 <td>${book.id_libro}</td>
                 <td>${book.titulo}</td>
@@ -302,9 +328,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Solo attach si existe el input y la tabla
+    // Si no existen elementos, terminar
     if (!inputBusqueda || !tbody) return;
 
+    // Evento input: búsqueda en tiempo real
     inputBusqueda.addEventListener("input", () => {
         clearTimeout(timer);
         timer = setTimeout(() => {
@@ -312,7 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const campo = campoSelect.value;
             const orden = ordenSelect.value;
 
-            fetch(`/buscar_libros?q=${encodeURIComponent(q)}&campo=${encodeURIComponent(campo)}&orden=${encodeURIComponent(orden)}`)
+            // Petición fetch al backend para buscar libros
+            fetch(`/buscar_libros?q=${q}&campo=${campo}&orden=${orden}`)
                 .then(res => {
                     if (!res.ok) throw new Error('Error en la respuesta');
                     return res.json();
@@ -320,13 +348,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(data => renderRows(data))
                 .catch(err => {
                     console.error("Error al buscar libros:", err);
-                    // no romper la UI: mostrar mensaje
                     tbody.innerHTML = `<tr><td colspan="6">Error al buscar resultados.</td></tr>`;
                 });
-        }, 300);
+        }, 300); // Delay para no saturar servidor
     });
 
-    // también actualizar al cambiar los selects
+    // Si se cambia el campo u orden, relanzar búsqueda
     [campoSelect, ordenSelect].forEach(select => {
         select.addEventListener("change", () => {
             inputBusqueda.dispatchEvent(new Event("input"));
@@ -335,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- Guardado de scroll -->
+<!-- Guardado y restauración de posición de scroll -->
 <script>
 window.addEventListener("beforeunload", () => {
     localStorage.setItem("scrollPosition", window.scrollY);

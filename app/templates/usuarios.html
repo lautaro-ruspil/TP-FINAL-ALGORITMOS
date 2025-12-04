@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const campo = campoSelect.value;
                 const orden = ordenSelect.value;
 
-                fetch(`/buscar_usuarios?q=${encodeURIComponent(q)}&campo=${campo}&orden=${orden}`)
+                fetch(`/buscar_usuarios?q=${q}&campo=${campo}&orden=${orden}`)
                     .then(res => res.json())
                     .then(data => {
                         tbody.innerHTML = "";
