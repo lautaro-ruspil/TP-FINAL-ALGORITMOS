@@ -111,7 +111,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-/* ---------- Utils ---------- */
+// Funcion para mostrar alerta personalizada
 function mostrarAlerta(e, form) {
     e.preventDefault();
     Swal.fire({
@@ -124,7 +124,33 @@ function mostrarAlerta(e, form) {
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar",
     }).then((result) => {
-        if (result.isConfirmed) form.submit();
+        if (result.isConfirmed) {
+            // Realizar petición con fetch para capturar respuesta JSON
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && !data.ok) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No se puede eliminar",
+                        text: data.msg,
+                        confirmButtonColor: "var(--color-primario-oscuro)"
+                    });
+                }
+            })
+            .catch(err => console.error("Error:", err));
+        }
     });
     return false;
 }
@@ -144,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         titulo: "El título debe tener al menos 2 caracteres y no contener símbolos especiales.",
         autor: "El autor debe tener al menos 3 letras y solo contener letras y espacios.",
         genero: "El género debe tener al menos 3 letras y solo contener letras y espacios.",
-        stock: "El stock no puede ser negativo."
+        stock: "El stock no puede ser negativo o nulo."
     };
 
     // obtenemos el formulario y los inputs
@@ -164,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (name === "stock") {
-            const n = parseInt(valor, 10);
+            const n = parseInt(valor,10);
             if (isNaN(n) || n < 1) {
                 errorEl.textContent = mensajes.stock;
                 input.classList.add("error-border");
@@ -186,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 
-    // Por cada input del formulario llamos a la función validarcampo
+    // Por cada input del formulario llamos a la función validar campo
     inputs.forEach(input => input.addEventListener("input", () => validarCampo(input)));
 
     /* 
@@ -212,7 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const filtro = document.getElementById("filtrado");
     filtro.addEventListener("submit", (e) => {
         const q = filtro.querySelector('input[name="q"]').value.trim();
-        if (q && q.length < 2) {
+        console.log(q)
+        if (!q || q.length < 2) {
             e.preventDefault();
             Swal.fire({
                 icon: "error",

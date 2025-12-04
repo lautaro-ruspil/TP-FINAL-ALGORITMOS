@@ -1,5 +1,4 @@
 class Usuario:
-
     def __init__(
         self, id_usuario, nombre, apellido, dni, telefono, direccion, nro_direccion, libros=None
     ):
