@@ -61,8 +61,11 @@ def libros():
 
         # Creamos un nuevo objeto Libro
         # El ID se calcula como la cantidad actual de libros + 1
+        nuevo_id = max([libro.id_libro for libro in biblioteca.libros]) + 1
+
+
         nuevo_libro = Libro(
-            len(biblioteca.libros) + 1,
+            nuevo_id,
             titulo,
             autor,
             genero,
@@ -252,10 +255,13 @@ def usuarios():
         direccion = request.form.get("direccion", "").strip()
         nro_direccion = request.form.get("nro_direccion", "").strip()
 
+        nuevo_id = max([usuario.id_usuario for usuario in biblioteca.users]) + 1
+
+
         # Creamos un nuevo objeto Usuario
         # El ID se calcula como la cantidad actual de usuarios + 1
         nuevo = Usuario(
-            len(biblioteca.users) + 1,
+            nuevo_id,
             nombre,
             apellido,
             dni,
